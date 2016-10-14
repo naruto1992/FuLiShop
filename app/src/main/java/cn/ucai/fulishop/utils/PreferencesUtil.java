@@ -2,7 +2,8 @@ package cn.ucai.fulishop.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
+
+import cn.ucai.fulishop.api.I;
 
 /**
  * Created by Shinelon on 2016/10/13.

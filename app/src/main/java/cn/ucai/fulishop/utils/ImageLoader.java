@@ -14,6 +14,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
 import cn.ucai.fulishop.R;
+import cn.ucai.fulishop.api.I;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.OkHttpClient;

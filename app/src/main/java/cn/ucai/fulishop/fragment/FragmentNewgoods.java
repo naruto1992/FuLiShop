@@ -6,20 +6,18 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.lidroid.xutils.ViewUtils;
-import com.lidroid.xutils.view.annotation.ViewInject;
-
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import cn.ucai.fulishop.R;
 import cn.ucai.fulishop.bean.GoodsBean;
-import cn.ucai.fulishop.utils.I;
-import cn.ucai.fulishop.view.Divider;
 import cn.ucai.fulishop.view.SpaceItemDecoration;
 
 /**
@@ -30,24 +28,25 @@ public class FragmentNewgoods extends Fragment {
 
     Context mContext;
 
-    @ViewInject(R.id.newGoodsSrl)
-    SwipeRefreshLayout newGoodsSrl;
-
-    @ViewInject(R.id.newGoodsRv)
-    RecyclerView newGoodsRv;
-
     NewGoodsAdapter adapter;
     List<GoodsBean> goodsList;
 
+    @BindView(R.id.newGoodsRv)
+    RecyclerView newGoodsRv;
+
+    @BindView(R.id.newGoodsSrl)
+    SwipeRefreshLayout newGoodsSrl;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_newgoods, container, false);
+        View layout = inflater.inflate(R.layout.fragment_newgoods, container, false);
+        ButterKnife.bind(this, layout);
+        return layout;
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        ViewUtils.inject(this, getView());
         mContext = getActivity();
         initView();
     }
@@ -69,6 +68,13 @@ public class FragmentNewgoods extends Fragment {
         newGoodsRv.addItemDecoration(new SpaceItemDecoration(20));
         newGoodsRv.setLayoutManager(gridLayoutManager);
         newGoodsRv.setAdapter(adapter);
+        //
+        newGoodsSrl.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                newGoodsSrl.setRefreshing(false);
+            }
+        });
     }
 
     class NewGoodsAdapter extends RecyclerView.Adapter implements View.OnClickListener {

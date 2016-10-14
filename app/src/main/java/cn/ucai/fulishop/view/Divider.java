@@ -12,26 +12,35 @@ import android.view.View;
  */
 public class Divider extends RecyclerView.ItemDecoration {
 
-    private Paint mPaint ;
-    private int mColor  = 0xffDDDDDD;
-    private int mHeight = 1 ;
-    private final Rect mRect = new Rect() ;
+    private Paint mPaint;
+    private int mColor = 0xffDDDDDD;
+    private int mHeight = 1;
+    private final Rect mRect = new Rect();
+
     public Divider() {
-        mPaint = new Paint() ;
+        mPaint = new Paint();
+        mPaint.setColor(mColor);
+        mPaint.setStyle(Paint.Style.FILL);
+    }
+
+    public Divider(int color, int height) {
+        mPaint = new Paint();
+        mColor = color;
+        mHeight = height;
         mPaint.setColor(mColor);
         mPaint.setStyle(Paint.Style.FILL);
     }
 
     @Override
     public void onDraw(Canvas c, RecyclerView parent, RecyclerView.State state) {
-        int left = parent.getPaddingLeft() ;
-        int right =  parent.getMeasuredWidth() - parent.getPaddingRight() ;
-        int N = parent.getChildCount() ;
-        for(int i = 0 ; i < N ; i ++){
-            View child = parent.getChildAt(i) ;
-            RecyclerView.LayoutParams layoutParams = (RecyclerView.LayoutParams)child .getLayoutParams();
-            int top  = child.getBottom() + layoutParams.bottomMargin + Math.round(ViewCompat.getTranslationX(child)) ;
-            int bottom  = top + mHeight;
+        int left = parent.getPaddingLeft();
+        int right = parent.getMeasuredWidth() - parent.getPaddingRight();
+        int N = parent.getChildCount();
+        for (int i = 0; i < N; i++) {
+            View child = parent.getChildAt(i);
+            RecyclerView.LayoutParams layoutParams = (RecyclerView.LayoutParams) child.getLayoutParams();
+            int top = child.getBottom() + layoutParams.bottomMargin + Math.round(ViewCompat.getTranslationX(child));
+            int bottom = top + mHeight;
             mRect.set(left, top, right, bottom);
             c.drawRect(mRect, mPaint);
         }

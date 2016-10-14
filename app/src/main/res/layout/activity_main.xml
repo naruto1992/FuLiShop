@@ -78,9 +78,16 @@
             android:text="我" />
     </LinearLayout>
 
+    <View
+        android:id="@+id/line"
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_above="@id/tabs"
+        android:background="@color/black" />
+
     <RelativeLayout
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/tabs" />
+        android:layout_above="@id/line" />
 </RelativeLayout>

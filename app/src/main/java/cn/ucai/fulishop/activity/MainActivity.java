@@ -11,12 +11,11 @@ import android.widget.CompoundButton;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
-import com.lidroid.xutils.ViewUtils;
-import com.lidroid.xutils.view.annotation.ViewInject;
-
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import cn.ucai.fulishop.R;
 import cn.ucai.fulishop.fragment.FragmentBoutique;
 import cn.ucai.fulishop.fragment.FragmentCart;
@@ -24,7 +23,7 @@ import cn.ucai.fulishop.fragment.FragmentCategory;
 import cn.ucai.fulishop.fragment.FragmentNewgoods;
 import cn.ucai.fulishop.fragment.FragmentPersonal;
 
-public class MainActivity extends AppCompatActivity implements
+public class MainActivity extends BaseActivity implements
         RadioButton.OnCheckedChangeListener {
 
     Context mContext;
@@ -35,24 +34,24 @@ public class MainActivity extends AppCompatActivity implements
     FragmentCart fragmentCart;
     FragmentPersonal fragmentPersonal;
 
-    @ViewInject(R.id.rbNewgoods)
+    @BindView(R.id.rbNewgoods)
     RadioButton rbNewgoods;
 
-    @ViewInject(R.id.rbBoutique)
+    @BindView(R.id.rbBoutique)
     RadioButton rbBoutique;
 
-    @ViewInject(R.id.rbCategory)
+    @BindView(R.id.rbCategory)
     RadioButton rbCategory;
 
-    @ViewInject(R.id.rbCart)
+    @BindView(R.id.rbCart)
     RadioButton rbCart;
 
-    @ViewInject(R.id.rbPersonal)
+    @BindView(R.id.rbPersonal)
     RadioButton rbPersonal;
 
     List<RadioButton> tabs = new ArrayList<>();
 
-    @ViewInject(R.id.cartHint)
+    @BindView(R.id.cartHint)
     TextView cartHint; //购物车数量
 
     int index = 0;
@@ -61,7 +60,7 @@ public class MainActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ViewUtils.inject(this);
+        ButterKnife.bind(this);
         mContext = this;
         initView();
 

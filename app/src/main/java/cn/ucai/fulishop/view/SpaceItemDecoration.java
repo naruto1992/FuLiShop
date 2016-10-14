@@ -17,15 +17,9 @@ public class SpaceItemDecoration extends RecyclerView.ItemDecoration {
         int pos = parent.getChildLayoutPosition(view);
         if (parent.getChildPosition(view) != 0)
             outRect.top = space;
-
         // 设置左右间距
         outRect.set(space / 2, 0, space / 2, 0);
-
         // 从第二行开始 top = mSpace
-//            if (pos >= I.COLUM_NUM) {
         outRect.top = space;
-//            } else {
-//                outRect.top = 0;
-//            }
     }
 }

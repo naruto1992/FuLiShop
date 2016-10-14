@@ -16,7 +16,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.ucai.fulishop.R;
-import cn.ucai.fulishop.bean.GoodsBean;
+import cn.ucai.fulishop.bean.RecyclerBean;
 import cn.ucai.fulishop.view.SpaceItemDecoration;
 
 /**
@@ -32,7 +32,7 @@ public class FragmentBoutique extends Fragment {
     RecyclerView boutiqueRv;
 
     BoutiquesAdapter adapter;
-    List<GoodsBean> boutiqueList;
+    List<RecyclerBean> boutiqueList;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -51,7 +51,7 @@ public class FragmentBoutique extends Fragment {
     private void initView() {
         boutiqueList = new ArrayList<>();
         for (int i = 0; i < 16; i++) {
-            GoodsBean bean = new GoodsBean();
+            RecyclerBean bean = new RecyclerBean();
             boutiqueList.add(bean);
         }
         adapter = new BoutiquesAdapter(mContext, boutiqueList);
@@ -77,9 +77,9 @@ public class FragmentBoutique extends Fragment {
     class BoutiquesAdapter extends RecyclerView.Adapter implements View.OnClickListener {
 
         Context context;
-        List<GoodsBean> goodsList;
+        List<RecyclerBean> goodsList;
 
-        public BoutiquesAdapter(Context context, List<GoodsBean> list) {
+        public BoutiquesAdapter(Context context, List<RecyclerBean> list) {
             this.context = context;
             this.goodsList = list;
         }

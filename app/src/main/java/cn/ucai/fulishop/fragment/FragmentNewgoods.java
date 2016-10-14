@@ -6,7 +6,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +16,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.ucai.fulishop.R;
-import cn.ucai.fulishop.bean.GoodsBean;
+import cn.ucai.fulishop.bean.RecyclerBean;
 import cn.ucai.fulishop.view.SpaceItemDecoration;
 
 /**
@@ -29,7 +28,7 @@ public class FragmentNewgoods extends Fragment {
     Context mContext;
 
     NewGoodsAdapter adapter;
-    List<GoodsBean> goodsList;
+    List<RecyclerBean> goodsList;
 
     @BindView(R.id.newGoodsRv)
     RecyclerView newGoodsRv;
@@ -54,7 +53,7 @@ public class FragmentNewgoods extends Fragment {
     private void initView() {
         goodsList = new ArrayList<>();
         for (int i = 0; i < 16; i++) {
-            GoodsBean bean = new GoodsBean();
+            RecyclerBean bean = new RecyclerBean();
             goodsList.add(bean);
         }
         adapter = new NewGoodsAdapter(mContext, goodsList);
@@ -80,9 +79,9 @@ public class FragmentNewgoods extends Fragment {
     class NewGoodsAdapter extends RecyclerView.Adapter implements View.OnClickListener {
 
         Context context;
-        List<GoodsBean> goodsList;
+        List<RecyclerBean> goodsList;
 
-        public NewGoodsAdapter(Context context, List<GoodsBean> list) {
+        public NewGoodsAdapter(Context context, List<RecyclerBean> list) {
             this.context = context;
             this.goodsList = list;
         }

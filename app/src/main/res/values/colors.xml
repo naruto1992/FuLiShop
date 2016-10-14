@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">@color/black2</color>
+    <color name="colorPrimaryDark">@color/black2</color>
+    <color name="colorAccent">@color/main_orange</color>
+    <!--base-->
+    <color name="windows_color">#F5F5F5</color>
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="black2">#232325</color>
+    <color name="black3">#ffeeeeee</color>
+    <color name="green">#4CAF50</color>
+    <color name="blue">#347ce9</color>
+    <color name="gray">#9A9A9A</color>
+    <color name="red">#FC2828</color>
+    <color name="transparent">#00000000</color>
+    <color name="line_color">#dbdbdb</color>
+    <color name="fragment_bg">#EFEFEF</color>
+    <color name="main_orange">#ff7800</color>
+    <!--tab-->
+
+
+</resources>

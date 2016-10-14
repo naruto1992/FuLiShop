@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/activity_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/windows_color">
+
+    <LinearLayout
+        android:id="@+id/tabs"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/line_color"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingTop="5dp">
+
+        <RadioButton
+            android:id="@+id/rbNewgoods"
+            style="@style/tab_style"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:drawableTop="@drawable/tab_newgood"
+            android:text="新品" />
+
+        <RadioButton
+            android:id="@+id/rbBoutique"
+            style="@style/tab_style"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:drawableTop="@drawable/tab_boutique"
+            android:text="精选" />
+
+
+        <RadioButton
+            android:id="@+id/rbCategory"
+            style="@style/tab_style"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:drawableTop="@drawable/tab_category"
+            android:text="分类" />
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <RadioButton
+                android:id="@+id/rbCart"
+                style="@style/tab_style"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:drawableTop="@drawable/tab_cart"
+                android:text="购物车" />
+
+            <TextView
+                android:id="@+id/cartHint"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:layout_alignRight="@id/rbCart"
+                android:layout_marginRight="15dp"
+                android:background="@drawable/cart_hint"
+                android:gravity="center"
+                android:text="5"
+                android:textColor="@color/white" />
+        </RelativeLayout>
+
+        <RadioButton
+            android:id="@+id/rbPersonal"
+            style="@style/tab_style"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:drawableTop="@drawable/tab_personal"
+            android:text="我" />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/tabs" />
+</RelativeLayout>

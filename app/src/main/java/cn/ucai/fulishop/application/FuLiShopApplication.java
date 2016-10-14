@@ -1,4 +1,4 @@
-package cn.ucai.fulishop;
+package cn.ucai.fulishop.application;
 
 import android.app.Application;
 import android.content.Context;

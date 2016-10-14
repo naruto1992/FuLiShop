@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/newGoodsSrl"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/fragment_bg"
     android:orientation="vertical">
 
-    <TextView
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/newGoodsRv"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:text="新品"
-        android:textSize="16sp" />
+        android:layout_height="match_parent" />
 
-</LinearLayout>
+</android.support.v4.widget.SwipeRefreshLayout>

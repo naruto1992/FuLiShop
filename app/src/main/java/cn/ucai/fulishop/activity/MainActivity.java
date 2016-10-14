@@ -6,17 +6,10 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.CompoundButton;
-import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.RadioButton;
-import android.widget.RadioGroup;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.LinearLayout.LayoutParams;
 
 import com.lidroid.xutils.ViewUtils;
 import com.lidroid.xutils.view.annotation.ViewInject;
@@ -44,15 +37,21 @@ public class MainActivity extends AppCompatActivity implements
 
     @ViewInject(R.id.rbNewgoods)
     RadioButton rbNewgoods;
+
     @ViewInject(R.id.rbBoutique)
     RadioButton rbBoutique;
+
     @ViewInject(R.id.rbCategory)
     RadioButton rbCategory;
+
     @ViewInject(R.id.rbCart)
     RadioButton rbCart;
+
     @ViewInject(R.id.rbPersonal)
     RadioButton rbPersonal;
+
     List<RadioButton> tabs = new ArrayList<>();
+
     @ViewInject(R.id.cartHint)
     TextView cartHint; //购物车数量
 

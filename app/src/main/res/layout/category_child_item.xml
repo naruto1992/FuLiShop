@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/layout_category_child"
     android:layout_width="match_parent"
     android:layout_height="50dp"
-    android:background="@color/white"
+    android:background="@color/fragment_bg"
     android:orientation="horizontal"
-    android:paddingLeft="50dp"
+    android:paddingLeft="80dp"
     android:paddingRight="50dp">
 
     <ImageView
@@ -23,7 +22,7 @@
         android:layout_centerVertical="true"
         android:layout_marginLeft="30dp"
         android:layout_toRightOf="@id/ivCategoryChildThumb"
-        android:text="衣服"
+        android:text="子分类：面膜"
         android:textSize="16sp"
         android:textStyle="bold" />
 

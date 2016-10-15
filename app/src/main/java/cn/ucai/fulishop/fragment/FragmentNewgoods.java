@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -22,20 +23,19 @@ import butterknife.ButterKnife;
 import cn.ucai.fulishop.R;
 import cn.ucai.fulishop.api.I;
 import cn.ucai.fulishop.bean.NewGoodsBean;
-import cn.ucai.fulishop.bean.RecyclerBean;
-import cn.ucai.fulishop.bean.Result;
+import cn.ucai.fulishop.listener.ListListener;
 import cn.ucai.fulishop.utils.DialogUtil;
 import cn.ucai.fulishop.utils.ImageLoader;
-import cn.ucai.fulishop.utils.LogUtil;
 import cn.ucai.fulishop.utils.OkHttpUtils;
 import cn.ucai.fulishop.utils.ToastUtil;
+import cn.ucai.fulishop.view.FooterViewHolder;
 import cn.ucai.fulishop.view.SpaceItemDecoration;
 
 /**
  * Created by Shinelon on 2016/10/13.
  */
 
-public class FragmentNewgoods extends Fragment {
+public class FragmentNewgoods extends Fragment implements OnRefreshListener, ListListener {
 
     Context mContext;
 
@@ -73,6 +73,7 @@ public class FragmentNewgoods extends Fragment {
     private void initView() {
         goodsList = new ArrayList<>();
         adapter = new NewGoodsAdapter(mContext, goodsList);
+        adapter.setClickListener(this);
         mLayoutManager = new GridLayoutManager(mContext, 2);
         mLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
             @Override
@@ -91,16 +92,8 @@ public class FragmentNewgoods extends Fragment {
     }
 
     private void initListener() {
-        newGoodsSrl.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                pageId = 1;
-                loadNewGoodsList(I.ACTION_PULL_DOWN, pageId);
-                newGoodsSrl.setEnabled(true);
-                newGoodsSrl.setRefreshing(true);
-            }
-        });
-        newGoodsRv.setOnScrollListener(new RecyclerView.OnScrollListener() {
+        newGoodsSrl.setOnRefreshListener(this);
+        newGoodsRv.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
@@ -150,31 +143,20 @@ public class FragmentNewgoods extends Fragment {
                                     break;
                             }
                         } else {
-                            getActivity().runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    ToastUtil.show(mContext, "加载数据失败");
-                                }
-                            });
+                            ToastUtil.showOnUI(getActivity(), "加载数据失败");
                         }
                     }
 
                     @Override
                     public void onError(final String error) {
-                        getActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                newGoodsSrl.setRefreshing(false);
-                                ToastUtil.show(mContext, error);
-                            }
-                        });
-
+                        newGoodsSrl.setRefreshing(false);
+                        ToastUtil.showOnUI(getActivity(), error);
                     }
                 });
 
     }
 
-    ////////////////////////////////////我是分割线//////////////////////////////////////
+    ////////////////////////////////////adapter部分//////////////////////////////////////
     class NewGoodsAdapter extends RecyclerView.Adapter implements View.OnClickListener {
 
         Context context;
@@ -182,10 +164,15 @@ public class FragmentNewgoods extends Fragment {
         String footerText;
         RecyclerView parent;
         boolean isMore;//是否有更多的数据可加载
+        ListListener mListener;
 
         public NewGoodsAdapter(Context context, List<NewGoodsBean> list) {
             this.context = context;
             this.goodsList = list;
+        }
+
+        public List<NewGoodsBean> getData() {
+            return goodsList;
         }
 
         public boolean isMore() {
@@ -194,6 +181,10 @@ public class FragmentNewgoods extends Fragment {
 
         public void setMore(boolean more) {
             isMore = more;
+        }
+
+        public void setClickListener(ListListener listener) {
+            this.mListener = listener;
         }
 
         //刷新
@@ -237,10 +228,11 @@ public class FragmentNewgoods extends Fragment {
             switch (viewType) {
                 case I.TYPE_FOOTER:
                     layout = inflater.inflate(R.layout.item_footer, null);
-                    holder = new FooterHolder(layout);
+                    holder = new FooterViewHolder(layout);
                     break;
                 case I.TYPE_ITEM:
                     layout = inflater.inflate(R.layout.newgoods_item, null);
+                    layout.setOnClickListener(this);
                     holder = new GoodsItemHolder(layout);
                     break;
             }
@@ -250,30 +242,34 @@ public class FragmentNewgoods extends Fragment {
         @Override
         public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
             if (position == getItemCount() - 1) {
-                FooterHolder footerHolder = (FooterHolder) holder;
+                FooterViewHolder footerHolder = (FooterViewHolder) holder;
                 footerHolder.footer.setText(footerText);
                 return;
             }
             NewGoodsBean bean = goodsList.get(position);
             GoodsItemHolder itemViewHolder = (GoodsItemHolder) holder;
             itemViewHolder.name.setText(bean.getGoodsName());
-//            itemViewHolder.price.setText("原价:" + bean.getCurrencyPrice() + "   促销价:" + bean.getPromotePrice());
+            //itemViewHolder.price.setText("原价:" + bean.getCurrencyPrice() + "   促销价:" + bean.getPromotePrice());
             itemViewHolder.price.setText("原价:" + bean.getCurrencyPrice());
             //加载图片
             ImageLoader.build(I.DOWNLOAD_IMG_URL)
                     .url(bean.getGoodsThumb())
-                    .width(80)
-                    .height(80)
+                   /* .width(80)
+                    .height(80)*/
                     .defaultPicture(R.drawable.nopic)
                     .imageView(itemViewHolder.pic)
                     .listener(parent)
                     .setDragging(mScrollState != RecyclerView.SCROLL_STATE_DRAGGING)
                     .showImage(context);
+            itemViewHolder.itemView.setTag(position);
         }
 
         @Override
         public void onClick(View v) {
-
+            int position = (int) v.getTag();
+            if (mListener != null) {
+                mListener.onItemClick(position);
+            }
         }
 
         class GoodsItemHolder extends RecyclerView.ViewHolder {
@@ -290,14 +286,25 @@ public class FragmentNewgoods extends Fragment {
             }
         }
 
-        class FooterHolder extends RecyclerView.ViewHolder {
-            @BindView(R.id.tvFooter)
-            TextView footer;
+    }
 
-            public FooterHolder(View itemView) {
-                super(itemView);
-                ButterKnife.bind(this, itemView);
-            }
-        }
+    ////////////////////////////////////我是分隔线//////////////////////////////////////
+    @Override
+    public void onRefresh() {
+        pageId = 1;
+        loadNewGoodsList(I.ACTION_PULL_DOWN, pageId);
+        newGoodsSrl.setEnabled(true);
+        newGoodsSrl.setRefreshing(true);
+    }
+
+    @Override
+    public void onItemClick(int position) {
+        NewGoodsBean bean = adapter.getData().get(position);
+        DialogUtil.show(mContext, bean.toString());
+    }
+
+    @Override
+    public void onItemLongClick(int position) {
+
     }
 }

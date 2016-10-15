@@ -1,40 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="340dp"
+    android:layout_height="280dp"
     android:background="@color/white"
     android:orientation="vertical">
 
     <ImageView
         android:id="@+id/newGoodsPic"
         android:layout_width="match_parent"
-        android:layout_height="280dp"
+        android:layout_height="220dp"
         android:scaleType="fitXY"
         android:src="@drawable/nopic" />
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:gravity="center"
-        android:orientation="vertical"
-        android:padding="10dp">
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/newGoodsName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:maxLines="2"
             android:text=""
-            android:textSize="16sp"
+            android:textSize="14sp"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/newGoodsPrice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_below="@id/newGoodsName"
+            android:layout_marginTop="4dp"
             android:text=""
             android:textColor="@color/red"
-            android:textSize="16sp" />
+            android:textSize="14sp" />
 
-    </LinearLayout>
+    </RelativeLayout>
 
 </LinearLayout>

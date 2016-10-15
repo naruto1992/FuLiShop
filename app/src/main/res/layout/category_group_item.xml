@@ -3,26 +3,26 @@
     android:id="@+id/category_item_parent"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:animateLayoutChanges="true"
-    android:background="@color/transparent"
+    android:animateLayoutChanges="false"
     android:orientation="vertical">
 
     <RelativeLayout
         android:id="@+id/category_item_layout"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="70dp"
         android:background="@color/white"
         android:orientation="horizontal"
-        android:paddingLeft="50dp"
-        android:paddingRight="50dp">
+        android:paddingLeft="30dp"
+        android:paddingRight="30dp">
 
         <ImageView
             android:id="@+id/ivCategoryThumb"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
-            android:src="@mipmap/launcher" />
+            android:scaleType="fitXY"
+            android:src="@drawable/nopic" />
 
         <TextView
             android:id="@+id/tvCategoryName"
@@ -31,8 +31,9 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="30dp"
             android:layout_toRightOf="@id/ivCategoryThumb"
-            android:text="衣服"
-            android:textSize="16sp"
+            android:text=""
+            android:textSize="18sp"
+            android:textColor="@color/list_item_name"
             android:textStyle="bold" />
 
         <ImageView
@@ -43,4 +44,5 @@
             android:layout_centerVertical="true"
             android:src="@drawable/expand_on" />
     </RelativeLayout>
+
 </LinearLayout>

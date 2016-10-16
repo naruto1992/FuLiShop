@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center_horizontal"
-    android:padding="5dp"
+    android:padding="6dp"
     android:text="加载更多数据">
 
 </TextView>

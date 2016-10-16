@@ -11,7 +11,7 @@ import cn.ucai.fulishop.api.I;
 
 public class PreferencesUtil {
 
-    public static final String SP_NAME = "superwechat_sp";
+    public static final String SP_NAME = "fulishop_sp";
     private static SharedPreferences mSp;
 
     public static SharedPreferences getSharedPreferences(Context context) {

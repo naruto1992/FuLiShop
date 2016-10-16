@@ -11,16 +11,13 @@ import android.widget.LinearLayout;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.ucai.fulishop.R;
 import cn.ucai.fulishop.api.I;
-import cn.ucai.fulishop.bean.BoutiqueBean;
 import cn.ucai.fulishop.bean.CategoryGroupBean;
 import cn.ucai.fulishop.utils.OkHttpUtils;
-import cn.ucai.fulishop.utils.PhoneUtil;
 import cn.ucai.fulishop.utils.ToastUtil;
 import cn.ucai.fulishop.view.CategoryItemView;
 
@@ -36,7 +33,6 @@ public class FragmentCategory extends Fragment {
     LinearLayout category_list_ll;
 
     ArrayList<CategoryGroupBean> groupList;
-//    List<CategoryItemView> categoryList;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

@@ -22,21 +22,18 @@ import butterknife.ButterKnife;
 import cn.ucai.fulishop.R;
 import cn.ucai.fulishop.api.I;
 import cn.ucai.fulishop.bean.BoutiqueBean;
-import cn.ucai.fulishop.bean.NewGoodsBean;
-import cn.ucai.fulishop.bean.RecyclerBean;
-import cn.ucai.fulishop.listener.ListListener;
+import cn.ucai.fulishop.listener.ListListener.OnItemClickListener;
 import cn.ucai.fulishop.utils.DialogUtil;
 import cn.ucai.fulishop.utils.ImageLoader;
 import cn.ucai.fulishop.utils.OkHttpUtils;
 import cn.ucai.fulishop.utils.ToastUtil;
-import cn.ucai.fulishop.view.FooterViewHolder;
 import cn.ucai.fulishop.view.SpaceItemDecoration;
 
 /**
  * Created by Shinelon on 2016/10/13.
  */
 
-public class FragmentBoutique extends Fragment implements SwipeRefreshLayout.OnRefreshListener, ListListener {
+public class FragmentBoutique extends Fragment implements SwipeRefreshLayout.OnRefreshListener, OnItemClickListener {
 
     Context mContext;
     @BindView(R.id.boutiqueSrl)
@@ -118,7 +115,7 @@ public class FragmentBoutique extends Fragment implements SwipeRefreshLayout.OnR
         Context context;
         List<BoutiqueBean> boutiqueList;
         RecyclerView parent;
-        ListListener mListener;
+        OnItemClickListener mListener;
 
         public BoutiquesAdapter(Context context, List<BoutiqueBean> list) {
             this.context = context;
@@ -129,7 +126,7 @@ public class FragmentBoutique extends Fragment implements SwipeRefreshLayout.OnR
             return boutiqueList;
         }
 
-        public void setClickListener(ListListener listener) {
+        public void setClickListener(OnItemClickListener listener) {
             this.mListener = listener;
         }
 
@@ -210,11 +207,5 @@ public class FragmentBoutique extends Fragment implements SwipeRefreshLayout.OnR
     @Override
     public void onItemClick(int position) {
         BoutiqueBean bean = adapter.getData().get(position);
-        DialogUtil.show(mContext, bean.toString());
-    }
-
-    @Override
-    public void onItemLongClick(int position) {
-
     }
 }

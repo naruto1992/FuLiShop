@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,24 +26,18 @@ import cn.ucai.fulishop.api.I;
 import cn.ucai.fulishop.bean.CategoryChildBean;
 import cn.ucai.fulishop.bean.CategoryGroupBean;
 import cn.ucai.fulishop.bean.RecyclerBean;
+import cn.ucai.fulishop.listener.ListListener.OnItemClickListener;
 import cn.ucai.fulishop.utils.ImageLoader;
 import cn.ucai.fulishop.utils.OkHttpUtils;
 import cn.ucai.fulishop.utils.PhoneUtil;
 import cn.ucai.fulishop.utils.ToastUtil;
 
-/**
- * Created by Administrator on 2016/10/15.
- */
-
-public class CategoryItemView extends LinearLayout {
+public class CategoryItemView extends LinearLayout implements OnItemClickListener {
 
     Context mContext;
 
     @BindView(R.id.category_item_parent)
     LinearLayout parent; //父容器
-
-    @BindView(R.id.category_item_layout)
-    RelativeLayout category_item_layout;
 
     @BindView(R.id.ivCategoryThumb)
     ImageView ivCategoryThumb; //分类图标
@@ -54,8 +49,12 @@ public class CategoryItemView extends LinearLayout {
     ImageView ivCategoryExpand;  //分类扩展图标
 
     CategoryGroupBean mGroupBean;
+
+    int childPageId = 1;
+    static final int CHILD_PAGE_SIZE = 10;
     RecyclerView childListRv;
-    ArrayList<CategoryChildBean> childList;
+    CategoryChildAdapter childListAdapter;
+    boolean needFooter = true;
     boolean isShown = false;
 
     public CategoryItemView(Context context) {
@@ -81,8 +80,8 @@ public class CategoryItemView extends LinearLayout {
         LinearLayout.LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
         layout.setLayoutParams(params);
         addView(layout);
-        int bottomPadding = PhoneUtil.dp2px(mContext, 10);
-        this.setPadding(0, 0, 0, bottomPadding);
+        //int bottomPadding = PhoneUtil.dp2px(mContext, 10);
+        //this.setPadding(0, 0, 0, bottomPadding);
     }
 
     public void init(CategoryGroupBean bean) {
@@ -101,7 +100,7 @@ public class CategoryItemView extends LinearLayout {
     @OnClick(R.id.category_item_layout)
     public void showChildList(View v) {
         if (childListRv == null) {
-            loadChildList();
+            loadChildList(childPageId);
         } else {
             if (isShown) {
                 parent.removeView(childListRv);
@@ -114,48 +113,56 @@ public class CategoryItemView extends LinearLayout {
         }
     }
 
-    private void loadChildList() {
+    private void loadChildList(final int pageId) {
         final OkHttpUtils<String> utils = new OkHttpUtils<>(mContext);
         utils.setRequestUrl(I.REQUEST_FIND_CATEGORY_CHILDREN)
                 .addParam(I.CategoryChild.PARENT_ID, "" + mGroupBean.getId())
-                .addParam(I.PAGE_ID, "1")
-                .addParam(I.PAGE_SIZE, "20")
+                .addParam(I.PAGE_ID, "" + pageId)
+                .addParam(I.PAGE_SIZE, "" + CHILD_PAGE_SIZE)
                 .targetClass(String.class)
                 .execute(new OkHttpUtils.OnCompleteListener<String>() {
-                    @Override
-                    public void onSuccess(String result) {
-                        if (result != null) {
-                            Gson gson = new Gson();
-                            CategoryChildBean[] list = gson.fromJson(result, CategoryChildBean[].class);
-                            childList = utils.array2List(list);
-                            if (childList != null && childList.size() > 0) {
-                                initAndShowChildList();
-                            } else {
-                                ToastUtil.show(mContext, "二级分类数据获取失败");
-                            }
-                        }
-                    }
+                             @Override
+                             public void onSuccess(String result) {
+                                 if (result != null) {
+                                     Gson gson = new Gson();
+                                     CategoryChildBean[] list = gson.fromJson(result, CategoryChildBean[].class);
+                                     if (list != null && list.length > 0) {
+                                         ArrayList<CategoryChildBean> childList = utils.array2List(list);
+                                         if (pageId == 1) {
+                                             initAndShowChildList(childList);
+                                         } else {
+                                             childListAdapter.loadMore(childList);
+                                         }
+                                     }
+                                 }
+                             }
 
-                    @Override
-                    public void onError(String error) {
-                        ToastUtil.show(mContext, error);
-                    }
-                });
+                             @Override
+                             public void onError(String error) {
+                                 ToastUtil.show(mContext, error);
+                             }
+                         }
+
+                );
     }
 
-    private void initAndShowChildList() {
+    private void initAndShowChildList(ArrayList<CategoryChildBean> list) {
         childListRv = new RecyclerView(mContext);
+        childListAdapter = new CategoryChildAdapter(mContext, list);
+        childListAdapter.setClickListener(this);
+        childListRv.setAdapter(childListAdapter);
         GridLayoutManager manager = new GridLayoutManager(mContext, 2);
         manager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
             @Override
             public int getSpanSize(int position) {
+                if (needFooter && position == childListAdapter.getItemCount() - 1) {
+                    return 2;
+                }
                 return 1;
             }
         });
         childListRv.setLayoutManager(manager);
-        CategoryChildAdapter adapter = new CategoryChildAdapter(mContext, childList);
-        childListRv.setAdapter(adapter);
-        childListRv.addItemDecoration(new SpaceItemDecoration(20));
+        //childListRv.addItemDecoration(new SpaceItemDecoration(10));
         parent.addView(childListRv);
         isShown = true;
         switchExpand(); //切换展开图标
@@ -170,42 +177,106 @@ public class CategoryItemView extends LinearLayout {
     }
 
     ///////////////////////////////////////adapter/////////////////////////////////////////////
-    class CategoryChildAdapter extends RecyclerView.Adapter<CategoryChildAdapter.CategoryChildViewHolder> {
+    class CategoryChildAdapter extends RecyclerView.Adapter<ViewHolder> implements View.OnClickListener {
 
         Context context;
         ArrayList<CategoryChildBean> list;
         RecyclerView mParent;
+        String footerText = "更多分类";
+        boolean isMore = false;
+        OnItemClickListener listener;
 
         public CategoryChildAdapter(Context context, ArrayList<CategoryChildBean> list) {
             this.context = context;
             this.list = list;
+            this.isMore = list.size() < CHILD_PAGE_SIZE ? false : true;
+        }
+
+        public ArrayList<CategoryChildBean> getList() {
+            return list;
+        }
+
+        public boolean isMore() {
+            return isMore;
+        }
+
+        public void loadMore(ArrayList<CategoryChildBean> list) {
+            this.isMore = list.size() < CHILD_PAGE_SIZE ? false : true;
+            this.list.addAll(list);
+            notifyDataSetChanged();
+        }
+
+        public void setFooterText(String text) {
+            this.footerText = text;
+            notifyDataSetChanged();
+        }
+
+        public void setClickListener(OnItemClickListener listener) {
+            this.listener = listener;
         }
 
         @Override
         public int getItemCount() {
-            return list == null ? 0 : list.size();
+            if (list == null) {
+                return 0;
+            }
+            if (list.size() < CHILD_PAGE_SIZE) { //如果当前数据不满一页，则无需Footer
+                needFooter = false;
+                return list.size();
+            }
+            return list.size() + 1;
         }
 
         @Override
-        public CategoryChildViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public int getItemViewType(int position) {
+            if (needFooter && position == getItemCount() - 1) {
+                return I.TYPE_FOOTER;
+            } else {
+                return I.TYPE_ITEM;
+            }
+        }
+
+        @Override
+
+        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             mParent = (RecyclerView) parent;
             LayoutInflater inflater = LayoutInflater.from(context);
-            View layout = inflater.inflate(R.layout.category_child_item, null);
-            return new CategoryChildViewHolder(layout);
+            View layout = null;
+            ViewHolder holder = null;
+            switch (viewType) {
+                case I.TYPE_FOOTER:
+                    layout = inflater.inflate(R.layout.item_footer, null);
+                    holder = new FooterViewHolder(layout);
+                    break;
+                case I.TYPE_ITEM:
+                    layout = inflater.inflate(R.layout.category_child_item, null);
+                    holder = new CategoryChildViewHolder(layout);
+                    break;
+            }
+            layout.setOnClickListener(this);
+            return holder;
         }
 
         @Override
-        public void onBindViewHolder(CategoryChildViewHolder holder, int position) {
-            CategoryChildBean childBean = childList.get(position);
-            holder.tvCategoryChildName.setText(childBean.getName());
+        public void onBindViewHolder(ViewHolder holder, int position) {
+            if (getItemViewType(position) == I.TYPE_FOOTER) {
+                FooterViewHolder footerViewHolder = (FooterViewHolder) holder;
+                footerViewHolder.footer.setText(footerText);
+                footerViewHolder.itemView.setTag(position);
+                return;
+            }
+            CategoryChildViewHolder itemViewHolder = (CategoryChildViewHolder) holder;
+            CategoryChildBean childBean = list.get(position);
+            itemViewHolder.tvCategoryChildName.setText(childBean.getName());
             ImageLoader.build(I.DOWNLOAD_IMG_URL)
                     .url(childBean.getImageUrl())
                     .width(50)
                     .height(50)
                     .defaultPicture(R.drawable.nopic)
-                    .imageView(holder.ivCategoryChildThumb)
+                    .imageView(itemViewHolder.ivCategoryChildThumb)
                     .listener(mParent)
                     .showImage(mContext);
+            itemViewHolder.itemView.setTag(position);
         }
 
         class CategoryChildViewHolder extends RecyclerView.ViewHolder {
@@ -221,6 +292,29 @@ public class CategoryItemView extends LinearLayout {
                 ButterKnife.bind(this, itemView);
             }
         }
+
+        @Override
+        public void onClick(View view) {
+            int position = (int) view.getTag();
+            if (listener != null) {
+                listener.onItemClick(position);
+            }
+        }
     }
     ////////////////////////////////////////////////////////////////////////////////////////////
+
+    @Override
+    public void onItemClick(int position) {
+        if (childListAdapter.getItemViewType(position) == I.TYPE_FOOTER) {
+            if (childListAdapter.isMore()) {
+                childPageId++;
+                loadChildList(childPageId);
+            } else {
+                childListAdapter.setFooterText("没有更多分类了");
+            }
+        } else {
+            CategoryChildBean bean = childListAdapter.getList().get(position);
+            ToastUtil.show(mContext, bean.toString());
+        }
+    }
 }

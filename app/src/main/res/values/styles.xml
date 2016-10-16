@@ -11,9 +11,9 @@
     <style name="tab_style" parent="Widget.AppCompat.CompoundButton.RadioButton">
         <item name="android:button">@null</item>
         <item name="android:gravity">center</item>
-        <item name="android:layout_marginTop">5dp</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:textSize">14sp</item>
+        <item name="android:layout_marginTop">4dp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textSize">16sp</item>
         <item name="android:textColor">@drawable/selector_tab_item</item>
     </style>
 </resources>

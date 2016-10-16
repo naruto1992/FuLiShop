@@ -5,11 +5,11 @@ import android.os.Bundle;
 
 import cn.ucai.fulishop.R;
 
-public class CategoryChildActivity extends AppCompatActivity {
+public class CatChildDetailActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_category_child);
+        setContentView(R.layout.activity_cat_child_detail);
     }
 }

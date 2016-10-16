@@ -51,6 +51,6 @@
     <color name="bluebg">#007edf</color>
     <color name="greybg">#EEEEEE</color>
     <color name="fontgrey">#999999</color>
-
+    <color name="light_blue">#0F90F1</color>
 
 </resources>

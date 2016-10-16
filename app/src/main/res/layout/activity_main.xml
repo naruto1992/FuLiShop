@@ -13,7 +13,7 @@
         android:background="@color/fragment_bg"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:paddingTop="5dp">
+        android:paddingTop="4dp">
 
         <RadioButton
             android:id="@+id/rbNewgoods"

@@ -6,7 +6,12 @@ package cn.ucai.fulishop.listener;
 
 public interface ListListener {
 
-    void onItemClick(int position);
+    interface OnItemClickListener {
+        void onItemClick(int position);
+    }
 
-    void onItemLongClick(int position);
+    interface OnItemLongClickListener {
+        void onItemLongClick(int position);
+    }
+
 }

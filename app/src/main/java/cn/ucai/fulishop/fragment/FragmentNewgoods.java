@@ -23,7 +23,7 @@ import butterknife.ButterKnife;
 import cn.ucai.fulishop.R;
 import cn.ucai.fulishop.api.I;
 import cn.ucai.fulishop.bean.NewGoodsBean;
-import cn.ucai.fulishop.listener.ListListener;
+import cn.ucai.fulishop.listener.ListListener.OnItemClickListener;
 import cn.ucai.fulishop.utils.DialogUtil;
 import cn.ucai.fulishop.utils.ImageLoader;
 import cn.ucai.fulishop.utils.OkHttpUtils;
@@ -35,7 +35,7 @@ import cn.ucai.fulishop.view.SpaceItemDecoration;
  * Created by Shinelon on 2016/10/13.
  */
 
-public class FragmentNewgoods extends Fragment implements OnRefreshListener, ListListener {
+public class FragmentNewgoods extends Fragment implements OnRefreshListener, OnItemClickListener {
 
     Context mContext;
 
@@ -164,7 +164,7 @@ public class FragmentNewgoods extends Fragment implements OnRefreshListener, Lis
         String footerText;
         RecyclerView parent;
         boolean isMore;//是否有更多的数据可加载
-        ListListener mListener;
+        OnItemClickListener mListener;
 
         public NewGoodsAdapter(Context context, List<NewGoodsBean> list) {
             this.context = context;
@@ -183,7 +183,7 @@ public class FragmentNewgoods extends Fragment implements OnRefreshListener, Lis
             isMore = more;
         }
 
-        public void setClickListener(ListListener listener) {
+        public void setClickListener(OnItemClickListener listener) {
             this.mListener = listener;
         }
 
@@ -300,11 +300,6 @@ public class FragmentNewgoods extends Fragment implements OnRefreshListener, Lis
     @Override
     public void onItemClick(int position) {
         NewGoodsBean bean = adapter.getData().get(position);
-        DialogUtil.show(mContext, bean.toString());
     }
 
-    @Override
-    public void onItemLongClick(int position) {
-
-    }
 }

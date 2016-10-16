@@ -22,6 +22,7 @@ import cn.ucai.fulishop.fragment.FragmentCart;
 import cn.ucai.fulishop.fragment.FragmentCategory;
 import cn.ucai.fulishop.fragment.FragmentNewgoods;
 import cn.ucai.fulishop.fragment.FragmentPersonal;
+import cn.ucai.fulishop.utils.ToastUtil;
 
 public class MainActivity extends BaseActivity implements
         RadioButton.OnCheckedChangeListener {
@@ -164,4 +165,15 @@ public class MainActivity extends BaseActivity implements
         cartHint.setText("" + cartNumber);
     }
 
+    long time;
+
+    @Override
+    public void onBackPressed() {
+        if (System.currentTimeMillis() - time > 2000) {
+            time = System.currentTimeMillis();
+            ToastUtil.show(mContext, "再次点击退出福利社");
+            return;
+        }
+        super.onBackPressed();
+    }
 }

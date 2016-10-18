@@ -65,6 +65,7 @@
                 android:background="@drawable/cart_hint"
                 android:gravity="center"
                 android:text="5"
+                android:visibility="gone"
                 android:textColor="@color/white" />
         </RelativeLayout>
 

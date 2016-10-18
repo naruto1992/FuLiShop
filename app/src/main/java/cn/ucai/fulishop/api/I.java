@@ -2,7 +2,9 @@ package cn.ucai.fulishop.api;
 
 
 public interface I {
-    String HASLOGINED = "hasLogined";
+    String HASLOGINED = "hasLogined";  //已登录
+    String HASLOGINOUT = "hasLoginout"; //已注销
+
     String SERVER_ROOT = "http://101.251.196.90:8000/FuLiCenterServerV2.0/";
     /**
      * 第一次下载

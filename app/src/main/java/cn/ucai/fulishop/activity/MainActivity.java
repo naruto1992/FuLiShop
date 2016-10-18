@@ -1,9 +1,13 @@
 package cn.ucai.fulishop.activity;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -17,6 +21,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.ucai.fulishop.R;
+import cn.ucai.fulishop.api.I;
 import cn.ucai.fulishop.fragment.FragmentBoutique;
 import cn.ucai.fulishop.fragment.FragmentCart;
 import cn.ucai.fulishop.fragment.FragmentCategory;
@@ -100,7 +105,26 @@ public class MainActivity extends BaseActivity implements
         rbNewgoods.setChecked(true);
         switchFragment(index);
         //初始化购物车数量
-        setCartHint(5);
+        initBroadCast();
+    }
+
+    private void initBroadCast() {
+        LocalBroadcastManager broadcastManager = LocalBroadcastManager
+                .getInstance(mContext);
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(I.Cart.COUNT);
+        BroadcastReceiver mReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                switch (intent.getAction()) {
+                    case I.Cart.COUNT:
+                        int count = intent.getIntExtra(I.Cart.COUNT, 0);
+                        setCartHint(count);
+                        break;
+                }
+            }
+        };
+        broadcastManager.registerReceiver(mReceiver, intentFilter);
     }
 
     @Override

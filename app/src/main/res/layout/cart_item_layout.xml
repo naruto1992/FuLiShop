@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="80dp"
+    android:background="@color/white"
+    android:orientation="vertical"
+    android:padding="10dp">
+
+    <CheckBox
+        android:id="@+id/cbCart"
+        style="@style/checkBox_style"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_margin="6dp" />
+
+    <ImageView
+        android:id="@+id/ivCartPic"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginLeft="10dp"
+        android:layout_toRightOf="@id/cbCart"
+        android:scaleType="fitXY"
+        android:src="@drawable/goods" />
+
+    <TextView
+        android:id="@+id/tvCartName"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:layout_alignTop="@id/ivCartPic"
+        android:layout_marginLeft="10dp"
+        android:layout_toRightOf="@id/ivCartPic"
+        android:text="杏仁紧实美肤油"
+        android:textColor="@color/google_yellow"
+        android:textSize="16sp" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:layout_alignBottom="@id/ivCartPic"
+        android:layout_marginLeft="10dp"
+        android:layout_toRightOf="@id/ivCartPic"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/ivCartAdd"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:padding="3dp"
+            android:src="@drawable/add_cart" />
+
+        <TextView
+            android:id="@+id/tvCartNum"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="3dp"
+            android:text="(1)"
+            android:textColor="@color/black"
+            android:textSize="18sp" />
+
+        <ImageView
+            android:id="@+id/ivCartDel"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:padding="3dp"
+            android:src="@drawable/del_cart" />
+    </LinearLayout>
+
+
+    <TextView
+        android:id="@+id/tvCartTotalPrice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:text="￥419"
+        android:textColor="@color/google_yellow"
+        android:textSize="16sp" />
+</RelativeLayout>

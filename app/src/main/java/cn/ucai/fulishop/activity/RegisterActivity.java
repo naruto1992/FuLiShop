@@ -75,7 +75,13 @@ public class RegisterActivity extends BackActivity {
                 .targetClass(Result.class)
                 .execute(new OkHttpUtils.OnCompleteListener<Result>() {
                     @Override
+                    public void onStart() {
+                        loadingDialog.show();
+                    }
+
+                    @Override
                     public void onSuccess(Result result) {
+                        loadingDialog.dismiss();
                         if (result.getRetCode() == 0 && result.isRetMsg()) {
                             ToastUtil.show(mContext, "注册成功");
                             finish();
@@ -90,6 +96,7 @@ public class RegisterActivity extends BackActivity {
 
                     @Override
                     public void onError(String error) {
+                        loadingDialog.dismiss();
                         ToastUtil.show(mContext, error);
                     }
                 });

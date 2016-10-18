@@ -6,10 +6,17 @@
     android:orientation="horizontal"
     android:padding="6dp">
 
+    <ImageView
+        android:id="@+id/ivFooter"
+        android:layout_width="24dp"
+        android:layout_height="30dp"
+        android:src="@drawable/expand_on" />
+
     <TextView
         android:id="@+id/tvFooter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="6dp"
         android:text="更多"
         android:textSize="16sp" />
 

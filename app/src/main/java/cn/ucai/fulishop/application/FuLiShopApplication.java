@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 
 import cn.ucai.fulishop.api.I;
+import cn.ucai.fulishop.bean.UserBean;
 import cn.ucai.fulishop.utils.PreferencesUtil;
 
 /**
@@ -12,21 +13,37 @@ import cn.ucai.fulishop.utils.PreferencesUtil;
 
 public class FuLiShopApplication extends Application {
 
-    public static Context applicationContext;
+    private static FuLiShopApplication application;
+    public static Context context;
     boolean hasLogined = false;
+
+    public static FuLiShopApplication getInstance() {
+        if (application == null) {
+            application = new FuLiShopApplication();
+        }
+        return application;
+    }
 
     @Override
     public void onCreate() {
         super.onCreate();
-        applicationContext = this;
+        context = this;
     }
 
-    private boolean hasLogined() {
-        hasLogined = PreferencesUtil.getBoolean(applicationContext, I.HASLOGINED, false);
+    public boolean hasLogined() {
+        hasLogined = PreferencesUtil.getBoolean(context, I.HASLOGINED, false);
         return hasLogined;
     }
 
-    private void setLogined(boolean isLogined) {
-        PreferencesUtil.putBoolean(applicationContext, I.HASLOGINED, isLogined);
+    public void setLogined(boolean isLogined) {
+        PreferencesUtil.putBoolean(context, I.HASLOGINED, isLogined);
+    }
+
+    public void saveUser(UserBean user) {
+        PreferencesUtil.saveUser(context, user);
+    }
+
+    public String getUserName() {
+        return PreferencesUtil.getString(context, I.User.USER_NAME);
     }
 }

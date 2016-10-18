@@ -15,11 +15,14 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.ucai.fulishop.R;
+import cn.ucai.fulishop.api.ApiDao;
 import cn.ucai.fulishop.api.I;
 import cn.ucai.fulishop.bean.CategoryGroupBean;
+import cn.ucai.fulishop.utils.ListUtil;
 import cn.ucai.fulishop.utils.OkHttpUtils;
 import cn.ucai.fulishop.utils.ToastUtil;
 import cn.ucai.fulishop.view.CategoryItemView;
+import cn.ucai.fulishop.view.LoadingDialog;
 
 /**
  * Created by Shinelon on 2016/10/13.
@@ -32,7 +35,7 @@ public class FragmentCategory extends Fragment {
     @BindView(R.id.category_list_ll)
     LinearLayout category_list_ll;
 
-    ArrayList<CategoryGroupBean> groupList;
+    LoadingDialog loadingDialog;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -45,33 +48,37 @@ public class FragmentCategory extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mContext = getActivity();
+        loadingDialog = new LoadingDialog.Builder(mContext).create();
         loadCategoryGroupList();
     }
 
     private void loadCategoryGroupList() {
-        final OkHttpUtils<String> utils = new OkHttpUtils<>(mContext);
-        utils.setRequestUrl(I.REQUEST_FIND_CATEGORY_GROUP)
-                .targetClass(String.class)
-                .execute(new OkHttpUtils.OnCompleteListener<String>() {
-                    @Override
-                    public void onSuccess(String result) {
-                        if (result != null) {
-                            Gson gson = new Gson();
-                            CategoryGroupBean[] list = gson.fromJson(result, CategoryGroupBean[].class);
-                            groupList = utils.array2List(list);
-                            if (groupList != null && groupList.size() > 0) {
-                                initView(groupList);
-                            }
-                        } else {
-                            ToastUtil.showOnUI(getActivity(), "数据获取失败");
-                        }
-                    }
+        ApiDao.loadCatGroupList(mContext, new OkHttpUtils.OnCompleteListener<CategoryGroupBean[]>() {
 
-                    @Override
-                    public void onError(String error) {
-                        ToastUtil.showOnUI(getActivity(), error);
+            @Override
+            public void onStart() {
+                loadingDialog.show();
+            }
+
+            @Override
+            public void onSuccess(CategoryGroupBean[] result) {
+                loadingDialog.dismiss();
+                if (result != null && result.length > 0) {
+                    ArrayList<CategoryGroupBean> groupList = ListUtil.array2List(result);
+                    if (groupList != null && groupList.size() > 0) {
+                        initView(groupList);
                     }
-                });
+                } else {
+                    ToastUtil.showOnUI(getActivity(), "数据获取失败");
+                }
+            }
+
+            @Override
+            public void onError(String error) {
+                loadingDialog.dismiss();
+                ToastUtil.showOnUI(getActivity(), error);
+            }
+        });
     }
 
 

@@ -56,6 +56,8 @@ public class OkHttpUtils<T> {
     MultipartBody.Builder mMultipartBodyBuilder;
 
     public interface OnCompleteListener<T> {
+        void onStart();
+
         void onSuccess(T result);
 
         void onError(String error);
@@ -148,10 +150,13 @@ public class OkHttpUtils<T> {
 
 
     private void initHandler() {
-        mHandler = new Handler(FuLiShopApplication.applicationContext.getMainLooper()) {
+        mHandler = new Handler(FuLiShopApplication.context.getMainLooper()) {
             @Override
             public void handleMessage(Message msg) {
                 switch (msg.what) {
+                    case DOWNLOAD_START:
+                        mListener.onStart();
+                        break;
                     case RESULT_ERROR:
                         mListener.onError(msg.obj == null ? msg.toString() : msg.obj.toString());
                         break;
@@ -344,6 +349,10 @@ public class OkHttpUtils<T> {
             call.enqueue(mCallback);
             return;
         }
+        //请求开始
+        Message msg = Message.obtain();
+        msg.what = DOWNLOAD_START;
+        mHandler.sendMessage(msg);
         call.enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {

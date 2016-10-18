@@ -21,14 +21,18 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.ucai.fulishop.R;
+import cn.ucai.fulishop.adapter.NewGoodsAdapter;
+import cn.ucai.fulishop.api.ApiDao;
 import cn.ucai.fulishop.api.I;
 import cn.ucai.fulishop.bean.NewGoodsBean;
 import cn.ucai.fulishop.listener.ListListener.OnItemClickListener;
 import cn.ucai.fulishop.utils.DialogUtil;
 import cn.ucai.fulishop.utils.ImageLoader;
+import cn.ucai.fulishop.utils.ListUtil;
 import cn.ucai.fulishop.utils.OkHttpUtils;
 import cn.ucai.fulishop.utils.ToastUtil;
 import cn.ucai.fulishop.view.FooterViewHolder;
+import cn.ucai.fulishop.view.LoadingDialog;
 import cn.ucai.fulishop.view.SpaceItemDecoration;
 
 /**
@@ -50,10 +54,9 @@ public class FragmentNewgoods extends Fragment implements OnRefreshListener, OnI
 
     GridLayoutManager mLayoutManager;
 
-    static final int PAGE_SIZE = 10;
     int pageId = 1;
 
-    int mScrollState; //当前滑动的状态
+    LoadingDialog loadingDialog;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -89,6 +92,7 @@ public class FragmentNewgoods extends Fragment implements OnRefreshListener, OnI
         newGoodsRv.setAdapter(adapter);
         //
         initListener();
+        loadingDialog = new LoadingDialog.Builder(mContext).create();
     }
 
     private void initListener() {
@@ -97,7 +101,6 @@ public class FragmentNewgoods extends Fragment implements OnRefreshListener, OnI
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
-                mScrollState = newState;
                 //获取最后一个列表项的索引
                 int lastPostion = mLayoutManager.findLastVisibleItemPosition();
                 if (lastPostion == adapter.getItemCount() - 1 && adapter.isMore() && newState == RecyclerView.SCROLL_STATE_IDLE) {
@@ -109,186 +112,60 @@ public class FragmentNewgoods extends Fragment implements OnRefreshListener, OnI
     }
 
     private void loadNewGoodsList(final int action, int pageId) {
-        final OkHttpUtils<String> utils = new OkHttpUtils<>(mContext);
-        utils.setRequestUrl(I.REQUEST_FIND_NEW_BOUTIQUE_GOODS)
-                .addParam(I.NewAndBoutiqueGoods.CAT_ID, "0")
-                .addParam(I.PAGE_ID, "" + pageId)
-                .addParam(I.PAGE_SIZE, "" + PAGE_SIZE)
-                .targetClass(String.class)
-                .execute(new OkHttpUtils.OnCompleteListener<String>() {
-                    @Override
-                    public void onSuccess(String result) {
-                        if (result != null) {
-                            Gson gson = new Gson();
-                            NewGoodsBean[] list = gson.fromJson(result, NewGoodsBean[].class);
-                            adapter.setMore(list != null && list.length > 0);
-                            if (!adapter.isMore()) {
-                                if (action == I.ACTION_PULL_UP) {
-                                    adapter.setFooter("没有更多商品了");
-                                }
-                                return;
-                            }
-                            ArrayList<NewGoodsBean> newgoodsList = utils.array2List(list);
-                            adapter.setFooter("加载更多数据");
-                            switch (action) {
-                                case I.ACTION_DOWNLOAD: //第一次加载
-                                    adapter.init(newgoodsList);
-                                    break;
-                                case I.ACTION_PULL_DOWN: //下拉刷新
-                                    adapter.init(newgoodsList);
-                                    newGoodsSrl.setRefreshing(false);
-                                    break;
-                                case I.ACTION_PULL_UP: //上拉加载
-                                    adapter.loadMore(newgoodsList);
-                                    break;
-                            }
-                        } else {
-                            ToastUtil.showOnUI(getActivity(), "加载数据失败");
+        ApiDao.loadNewGoodsList(mContext, pageId, new OkHttpUtils.OnCompleteListener<NewGoodsBean[]>() {
+            @Override
+            public void onStart() {
+                if (action != I.ACTION_PULL_DOWN) {
+                    loadingDialog.show();
+                }
+            }
+
+            @Override
+            public void onSuccess(NewGoodsBean[] result) {
+                if (loadingDialog.isShowing()) {
+                    loadingDialog.dismiss();
+                }
+                if (result != null && result.length > 0) {
+                    ArrayList<NewGoodsBean> newgoodsList = ListUtil.array2List(result);
+                    switch (action) {
+                        case I.ACTION_DOWNLOAD: //第一次加载
+                            adapter.init(newgoodsList);
+                            break;
+                        case I.ACTION_PULL_DOWN: //下拉刷新
+                            adapter.init(newgoodsList);
+                            newGoodsSrl.setRefreshing(false);
+                            break;
+                        case I.ACTION_PULL_UP: //上拉加载
+                            adapter.loadMore(newgoodsList);
+                            break;
+                    }
+                    adapter.setMore(newgoodsList.size() == I.PAGE_SIZE_DEFAULT);
+                    if (adapter.isMore()) {
+                        adapter.setFooter("更多商品");
+                    } else {
+                        if (action == I.ACTION_PULL_UP) {
+                            adapter.setFooter("没有更多商品了");
                         }
                     }
+                } else {
+                    ToastUtil.showOnUI(getActivity(), "加载数据失败");
+                }
+            }
 
-                    @Override
-                    public void onError(final String error) {
-                        newGoodsSrl.setRefreshing(false);
-                        ToastUtil.showOnUI(getActivity(), error);
-                    }
-                });
+            @Override
+            public void onError(final String error) {
+                if (action == I.ACTION_PULL_DOWN) {
+                    newGoodsSrl.setRefreshing(false);
+                }
+                if (loadingDialog.isShowing()) {
+                    loadingDialog.dismiss();
+                }
+                ToastUtil.showOnUI(getActivity(), error);
+            }
+        });
 
     }
 
-    ////////////////////////////////////adapter部分//////////////////////////////////////
-    class NewGoodsAdapter extends RecyclerView.Adapter implements View.OnClickListener {
-
-        Context context;
-        List<NewGoodsBean> goodsList;
-        String footerText;
-        RecyclerView parent;
-        boolean isMore;//是否有更多的数据可加载
-        OnItemClickListener mListener;
-
-        public NewGoodsAdapter(Context context, List<NewGoodsBean> list) {
-            this.context = context;
-            this.goodsList = list;
-        }
-
-        public List<NewGoodsBean> getData() {
-            return goodsList;
-        }
-
-        public boolean isMore() {
-            return isMore;
-        }
-
-        public void setMore(boolean more) {
-            isMore = more;
-        }
-
-        public void setClickListener(OnItemClickListener listener) {
-            this.mListener = listener;
-        }
-
-        //刷新
-        public void init(ArrayList<NewGoodsBean> list) {
-            this.goodsList.clear();
-            this.goodsList.addAll(list);
-            notifyDataSetChanged();
-        }
-
-        //加载更多
-        public void loadMore(ArrayList<NewGoodsBean> list) {
-            this.goodsList.addAll(list);
-            notifyDataSetChanged();
-        }
-
-        public void setFooter(String footerText) {
-            this.footerText = footerText;
-            notifyDataSetChanged();
-        }
-
-        @Override
-        public int getItemCount() {
-            return goodsList == null ? 0 : goodsList.size() + 1;
-        }
-
-        @Override
-        public int getItemViewType(int position) {
-            if (position == getItemCount() - 1) {
-                return I.TYPE_FOOTER;
-            } else {
-                return I.TYPE_ITEM;
-            }
-        }
-
-        @Override
-        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            this.parent = (RecyclerView) parent;
-            RecyclerView.ViewHolder holder = null;
-            LayoutInflater inflater = LayoutInflater.from(context);
-            View layout = null;
-            switch (viewType) {
-                case I.TYPE_FOOTER:
-                    layout = inflater.inflate(R.layout.item_footer, null);
-                    holder = new FooterViewHolder(layout);
-                    break;
-                case I.TYPE_ITEM:
-                    layout = inflater.inflate(R.layout.newgoods_item, null);
-                    layout.setOnClickListener(this);
-                    holder = new GoodsItemHolder(layout);
-                    break;
-            }
-            return holder;
-        }
-
-        @Override
-        public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-            if (position == getItemCount() - 1) {
-                FooterViewHolder footerHolder = (FooterViewHolder) holder;
-                footerHolder.footer.setText(footerText);
-                return;
-            }
-            NewGoodsBean bean = goodsList.get(position);
-            GoodsItemHolder itemViewHolder = (GoodsItemHolder) holder;
-            itemViewHolder.name.setText(bean.getGoodsName());
-            //itemViewHolder.price.setText("原价:" + bean.getCurrencyPrice() + "   促销价:" + bean.getPromotePrice());
-            itemViewHolder.price.setText("原价:" + bean.getCurrencyPrice());
-            //加载图片
-            ImageLoader.build(I.DOWNLOAD_IMG_URL)
-                    .url(bean.getGoodsThumb())
-                   /* .width(80)
-                    .height(80)*/
-                    .defaultPicture(R.drawable.nopic)
-                    .imageView(itemViewHolder.pic)
-                    .listener(parent)
-                    .setDragging(mScrollState != RecyclerView.SCROLL_STATE_DRAGGING)
-                    .showImage(context);
-            itemViewHolder.itemView.setTag(position);
-        }
-
-        @Override
-        public void onClick(View v) {
-            int position = (int) v.getTag();
-            if (mListener != null) {
-                mListener.onItemClick(position);
-            }
-        }
-
-        class GoodsItemHolder extends RecyclerView.ViewHolder {
-            @BindView(R.id.newGoodsPic)
-            ImageView pic;
-            @BindView(R.id.newGoodsName)
-            TextView name;
-            @BindView(R.id.newGoodsPrice)
-            TextView price;
-
-            public GoodsItemHolder(View itemView) {
-                super(itemView);
-                ButterKnife.bind(this, itemView);
-            }
-        }
-
-    }
-
-    ////////////////////////////////////我是分隔线//////////////////////////////////////
     @Override
     public void onRefresh() {
         pageId = 1;
@@ -298,7 +175,7 @@ public class FragmentNewgoods extends Fragment implements OnRefreshListener, OnI
     }
 
     @Override
-    public void onItemClick(int position) {
+    public void onItemClick(int position, int itemType) {
         NewGoodsBean bean = adapter.getData().get(position);
     }
 

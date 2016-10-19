@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 
+import cn.ucai.fulishop.utils.MFGT;
 import cn.ucai.fulishop.view.LoadingDialog;
 
 /**
@@ -32,7 +33,7 @@ public class BackActivity extends AppCompatActivity {
 
     @Override
     public boolean onSupportNavigateUp() {
-        finish();
+        MFGT.finish(this);
         return super.onSupportNavigateUp();
     }
 }

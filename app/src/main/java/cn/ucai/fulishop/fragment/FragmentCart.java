@@ -3,12 +3,14 @@ package cn.ucai.fulishop.fragment;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -32,6 +34,7 @@ import cn.ucai.fulishop.api.ApiDao;
 import cn.ucai.fulishop.api.I;
 import cn.ucai.fulishop.application.FuLiShopApplication;
 import cn.ucai.fulishop.bean.CartBean;
+import cn.ucai.fulishop.bean.MessageBean;
 import cn.ucai.fulishop.listener.ListListener;
 import cn.ucai.fulishop.utils.ListUtil;
 import cn.ucai.fulishop.utils.MFGT;
@@ -45,7 +48,7 @@ import cn.ucai.fulishop.view.SpaceItemDecoration;
  * Created by Shinelon on 2016/10/13.
  */
 
-public class FragmentCart extends Fragment implements SwipeRefreshLayout.OnRefreshListener, ListListener.OnItemClickListener {
+public class FragmentCart extends Fragment implements SwipeRefreshLayout.OnRefreshListener, ListListener.OnItemLongClickListener, CartListAdapter.CartListener {
 
     Context mContext;
     @BindView(R.id.btnCartLogin)
@@ -154,19 +157,11 @@ public class FragmentCart extends Fragment implements SwipeRefreshLayout.OnRefre
                             break;
                     }
                     adapter.setMore(list.size() == I.PAGE_SIZE_DEFAULT);
-                    if (adapter.isMore()) {
-                        adapter.setFooterText("更多");
-                    } else {
-                        adapter.setFooterText("已加载全部");
-                    }
                 } else {
                     noCartHint.setVisibility(View.VISIBLE);
                 }
-                // 发送广播通知
-                Intent intent = new Intent(I.Cart.COUNT);
                 count += result.length;
-                intent.putExtra(I.Cart.COUNT, count);
-                LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
+                sendBroadCast(count);
             }
 
             @Override
@@ -180,10 +175,18 @@ public class FragmentCart extends Fragment implements SwipeRefreshLayout.OnRefre
         });
     }
 
+    private void sendBroadCast(int count) {
+        // 发送广播通知
+        Intent intent = new Intent(I.Cart.COUNT);
+        intent.putExtra(I.Cart.COUNT, count);
+        LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
+    }
+
     private void initList(ArrayList<CartBean> list) {
         adapter = new CartListAdapter(mContext, list);
-        adapter.setmItemClickListener(this);
-        GridLayoutManager manager = new GridLayoutManager(mContext, 2);
+        adapter.setOnItemLongClickListener(this);
+        adapter.setCartListener(this);
+        final GridLayoutManager manager = new GridLayoutManager(mContext, 2);
         manager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
             @Override
             public int getSpanSize(int position) {
@@ -195,6 +198,17 @@ public class FragmentCart extends Fragment implements SwipeRefreshLayout.OnRefre
         cartRv.addItemDecoration(new SpaceItemDecoration(20));
         //
         cartSrl.setOnRefreshListener(this);
+        cartRv.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                int last = manager.findLastVisibleItemPosition();
+                if (last == adapter.getItemCount() - 1 && adapter.isMore() && newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    pageId++;
+                    loadCartList(I.ACTION_PULL_UP, pageId);
+                }
+            }
+        });
     }
 
     @Override
@@ -205,18 +219,73 @@ public class FragmentCart extends Fragment implements SwipeRefreshLayout.OnRefre
     }
 
     @Override
-    public void onItemClick(int position, int itemType) {
-        if (itemType == I.TYPE_ITEM) {
-            CartBean bean = adapter.getCartList().get(position);
-            ToastUtil.show(mContext, bean.toString());
-        } else {
-            if (adapter.isMore()) {
-                pageId++;
-                loadCartList(I.ACTION_PULL_UP, pageId);
-            } else {
-                ToastUtil.show(mContext, "没有更多数据了");
+    public void onItemLongClick(final int position) {
+        final CartBean bean = adapter.getCartList().get(position);
+        new AlertDialog.Builder(mContext)
+                .setTitle("确定将该商品移出购物车吗？")
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        ApiDao.delCartById(mContext, bean.getId(), new OkHttpUtils.OnCompleteListener<MessageBean>() {
+                            @Override
+                            public void onStart() {
+                            }
+
+                            @Override
+                            public void onSuccess(MessageBean result) {
+                                if (result.isSuccess()) {
+                                    adapter.delCart(position);
+                                    sendBroadCast(adapter.getItemCount());
+                                }
+                                ToastUtil.show(mContext, result.getMsg());
+                            }
+
+                            @Override
+                            public void onError(String error) {
+                                ToastUtil.show(mContext, error);
+                            }
+                        });
+                    }
+                })
+                .setNegativeButton("取消", null)
+                .create().show();
+    }
+
+    @Override
+    public void onItemClick(int position) {
+//        CartBean bean = adapter.getCartList().get(position);
+//        ToastUtil.show(mContext, bean.toString());
+    }
+
+    @Override
+    public void onCountChanged(int position, int number) {
+        CartBean bean = adapter.getCartList().get(position);
+        bean.setCount(number);
+        ApiDao.updateCartCount(mContext, bean, new OkHttpUtils.OnCompleteListener<MessageBean>() {
+            @Override
+            public void onStart() {
+
             }
-        }
+
+            @Override
+            public void onSuccess(MessageBean result) {
+                if (result.isSuccess()) {
+                    adapter.notifyDataSetChanged();
+                }
+                ToastUtil.show(mContext, result.getMsg());
+            }
+
+            @Override
+            public void onError(String error) {
+                ToastUtil.show(mContext, error);
+            }
+        });
+    }
+
+    @Override
+    public void onCheckChanged(int position, boolean isChecked) {
+        CartBean bean = adapter.getCartList().get(position);
+        bean.setChecked(isChecked);
     }
 
     @OnClick(R.id.btnCartLogin)

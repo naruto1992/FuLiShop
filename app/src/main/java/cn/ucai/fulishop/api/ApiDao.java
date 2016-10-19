@@ -6,6 +6,7 @@ import cn.ucai.fulishop.bean.BoutiqueBean;
 import cn.ucai.fulishop.bean.CartBean;
 import cn.ucai.fulishop.bean.CategoryChildBean;
 import cn.ucai.fulishop.bean.CategoryGroupBean;
+import cn.ucai.fulishop.bean.MessageBean;
 import cn.ucai.fulishop.bean.NewGoodsBean;
 import cn.ucai.fulishop.utils.OkHttpUtils;
 
@@ -93,4 +94,30 @@ public class ApiDao {
                 .targetClass(CartBean[].class)
                 .execute(listener);
     }
+
+    /**
+     * 删除购物车商品
+     *
+     * @param context
+     * @param id
+     * @param listener
+     */
+    public static void delCartById(Context context, int id, OkHttpUtils.OnCompleteListener listener) {
+        OkHttpUtils<MessageBean> utils = new OkHttpUtils<>(context);
+        utils.setRequestUrl(I.REQUEST_DELETE_CART)
+                .addParam(I.Cart.ID, "" + id)
+                .targetClass(MessageBean.class)
+                .execute(listener);
+    }
+
+    public static void updateCartCount(Context context, CartBean bean, OkHttpUtils.OnCompleteListener listener) {
+        OkHttpUtils<MessageBean> utils = new OkHttpUtils<>(context);
+        utils.setRequestUrl(I.REQUEST_UPDATE_CART)
+                .addParam(I.Cart.ID, "" + bean.getId())
+                .addParam(I.Cart.COUNT, "" + bean.getCount())
+                .addParam(I.Cart.IS_CHECKED, "" + bean.isChecked())
+                .targetClass(MessageBean.class)
+                .execute(listener);
+    }
+
 }

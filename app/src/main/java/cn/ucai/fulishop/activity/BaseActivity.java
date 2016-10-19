@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 
+import cn.ucai.fulishop.utils.MFGT;
+
 /**
  * Created by Administrator on 2016/10/14.
  */
@@ -17,5 +19,10 @@ public class BaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         actionBar = getSupportActionBar();
         actionBar.hide();
+    }
+
+    @Override
+    public void onBackPressed() {
+        MFGT.finish(this);
     }
 }

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/cartItemLayout"
     android:layout_width="match_parent"
     android:layout_height="80dp"
     android:background="@color/white"
@@ -12,7 +13,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_margin="6dp" />
+        android:layout_margin="6dp"
+        android:checked="true" />
 
     <ImageView
         android:id="@+id/ivCartPic"
@@ -21,7 +23,7 @@
         android:layout_marginLeft="10dp"
         android:layout_toRightOf="@id/cbCart"
         android:scaleType="fitXY"
-        android:src="@drawable/goods" />
+        android:src="@drawable/nopic" />
 
     <TextView
         android:id="@+id/tvCartName"
@@ -30,42 +32,81 @@
         android:layout_alignTop="@id/ivCartPic"
         android:layout_marginLeft="10dp"
         android:layout_toRightOf="@id/ivCartPic"
-        android:text="杏仁紧实美肤油"
+        android:text=""
         android:textColor="@color/google_yellow"
         android:textSize="16sp" />
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="wrap_content"
-        android:layout_height="30dp"
+        android:layout_height="50dp"
         android:layout_alignBottom="@id/ivCartPic"
         android:layout_marginLeft="10dp"
         android:layout_toRightOf="@id/ivCartPic"
-        android:gravity="center_vertical"
         android:orientation="horizontal">
 
-        <ImageView
-            android:id="@+id/ivCartAdd"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:padding="3dp"
-            android:src="@drawable/add_cart" />
+        <TextView
+            android:id="@+id/cartNumber"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:minWidth="40dp"
+            android:text="数量:"
+            android:textSize="16sp" />
 
         <TextView
             android:id="@+id/tvCartNum"
-            android:layout_width="wrap_content"
+            android:layout_width="40dp"
             android:layout_height="wrap_content"
-            android:padding="3dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@id/cartNumber"
+            android:gravity="center"
+            android:maxLines="1"
             android:text="(1)"
             android:textColor="@color/black"
-            android:textSize="18sp" />
+            android:textSize="18sp"
+            android:visibility="visible" />
 
-        <ImageView
-            android:id="@+id/ivCartDel"
-            android:layout_width="30dp"
+        <EditText
+            android:id="@+id/etCartNum"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@id/cartNumber"
+            android:background="@null"
+            android:gravity="bottom"
+            android:inputType="number"
+            android:maxLength="2"
+            android:maxLines="1"
+            android:visibility="invisible" />
+
+        <cn.ucai.fulishop.view.BottomLineTextView
+            android:id="@+id/bltCartNumEdit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@id/tvCartNum"
+            android:text="编辑"
+            android:textColor="@drawable/selector_text"
+            android:textSize="16sp"
+            android:visibility="visible" />
+
+        <Button
+            android:id="@+id/btnCartNumConfirm"
+            android:layout_width="40dp"
             android:layout_height="30dp"
-            android:padding="3dp"
-            android:src="@drawable/del_cart" />
-    </LinearLayout>
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@id/tvCartNum"
+            android:background="@drawable/btn_login_bg"
+            android:text="确定"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            android:visibility="invisible" />
+    </RelativeLayout>
 
 
     <TextView
@@ -74,7 +115,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:text="￥419"
+        android:text="￥0"
         android:textColor="@color/google_yellow"
         android:textSize="16sp" />
 </RelativeLayout>

@@ -23,4 +23,9 @@ public class MFGT { //move from go to
         context.startActivity(intent);
         context.overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
     }
+
+    public static void startActivityByIntent(Activity context, Intent intent) {
+        context.startActivity(intent);
+        context.overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+    }
 }

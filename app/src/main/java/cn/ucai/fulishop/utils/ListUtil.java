@@ -15,4 +15,9 @@ public class ListUtil {
         ArrayList<T> arrayList = new ArrayList<>(list);
         return arrayList;
     }
+
+    public static String[] list2StringArr(ArrayList<String> list) {
+        String[] arrayList = (String[]) list.toArray(new String[list.size()]);
+        return arrayList;
+    }
 }

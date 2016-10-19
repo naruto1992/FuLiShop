@@ -6,6 +6,7 @@ import cn.ucai.fulishop.bean.BoutiqueBean;
 import cn.ucai.fulishop.bean.CartBean;
 import cn.ucai.fulishop.bean.CategoryChildBean;
 import cn.ucai.fulishop.bean.CategoryGroupBean;
+import cn.ucai.fulishop.bean.GoodsDetailsBean;
 import cn.ucai.fulishop.bean.MessageBean;
 import cn.ucai.fulishop.bean.NewGoodsBean;
 import cn.ucai.fulishop.utils.OkHttpUtils;
@@ -110,6 +111,13 @@ public class ApiDao {
                 .execute(listener);
     }
 
+    /**
+     * 修改购物车商品数量
+     *
+     * @param context
+     * @param bean
+     * @param listener
+     */
     public static void updateCartCount(Context context, CartBean bean, OkHttpUtils.OnCompleteListener listener) {
         OkHttpUtils<MessageBean> utils = new OkHttpUtils<>(context);
         utils.setRequestUrl(I.REQUEST_UPDATE_CART)
@@ -117,6 +125,14 @@ public class ApiDao {
                 .addParam(I.Cart.COUNT, "" + bean.getCount())
                 .addParam(I.Cart.IS_CHECKED, "" + bean.isChecked())
                 .targetClass(MessageBean.class)
+                .execute(listener);
+    }
+
+    public static void loadGoodsDetail(Context context, int goodId, OkHttpUtils.OnCompleteListener listener) {
+        OkHttpUtils<GoodsDetailsBean> utils = new OkHttpUtils<>(context);
+        utils.setRequestUrl(I.REQUEST_FIND_GOOD_DETAILS)
+                .addParam(I.GoodsDetails.KEY_GOODS_ID, "" + goodId)
+                .targetClass(GoodsDetailsBean.class)
                 .execute(listener);
     }
 

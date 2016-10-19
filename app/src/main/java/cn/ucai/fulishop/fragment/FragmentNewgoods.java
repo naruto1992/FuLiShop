@@ -1,6 +1,8 @@
 package cn.ucai.fulishop.fragment;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -21,6 +23,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.ucai.fulishop.R;
+import cn.ucai.fulishop.activity.GoodsDetailActivity;
 import cn.ucai.fulishop.adapter.NewGoodsAdapter;
 import cn.ucai.fulishop.api.ApiDao;
 import cn.ucai.fulishop.api.I;
@@ -29,6 +32,7 @@ import cn.ucai.fulishop.listener.ListListener.OnItemClickListener;
 import cn.ucai.fulishop.utils.DialogUtil;
 import cn.ucai.fulishop.utils.ImageLoader;
 import cn.ucai.fulishop.utils.ListUtil;
+import cn.ucai.fulishop.utils.MFGT;
 import cn.ucai.fulishop.utils.OkHttpUtils;
 import cn.ucai.fulishop.utils.ToastUtil;
 import cn.ucai.fulishop.view.FooterViewHolder;
@@ -177,6 +181,10 @@ public class FragmentNewgoods extends Fragment implements OnRefreshListener, OnI
     @Override
     public void onItemClick(int position, int itemType) {
         NewGoodsBean bean = adapter.getData().get(position);
+        int goodsId = bean.getGoodsId();
+        Intent intent = new Intent(getActivity(), GoodsDetailActivity.class);
+        intent.putExtra(I.NewGoods.KEY_GOODS_ID, goodsId);
+        MFGT.startActivityByIntent(getActivity(), intent);
     }
 
 }

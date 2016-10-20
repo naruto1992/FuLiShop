@@ -11,6 +11,7 @@
         android:background="@color/main_orange">
 
         <ImageView
+            android:id="@+id/ivCatBack"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="10dp"
@@ -18,12 +19,16 @@
             android:src="@drawable/selector_back" />
 
         <LinearLayout
+            android:id="@+id/catSelect"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:gravity="center">
+            android:gravity="center"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp">
 
             <TextView
+                android:id="@+id/tvCatName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="5dp"
@@ -32,19 +37,24 @@
                 android:textSize="18sp" />
 
             <ImageView
+                android:id="@+id/tvCatExpand"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:src="@drawable/arrow_down" />
         </LinearLayout>
 
         <TextView
+            android:id="@+id/tvSortList"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:padding="10dp"
+            android:paddingBottom="10dp"
+            android:paddingLeft="40dp"
+            android:paddingRight="30dp"
+            android:paddingTop="10dp"
             android:text="排序"
-            android:textColor="@color/white"
+            android:textColor="@drawable/selector_text"
             android:textSize="18sp" />
 
     </RelativeLayout>

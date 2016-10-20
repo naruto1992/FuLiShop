@@ -8,11 +8,11 @@ import cn.ucai.fulishop.bean.NewGoodsBean;
  * Created by Administrator on 2016/10/20.
  */
 
-public class GoodsComparator implements Comparator<NewGoodsBean> {
+public class GoodsTimeComparator implements Comparator<NewGoodsBean> {
 
     int sortType;
 
-    public GoodsComparator(int sortType) {
+    public GoodsTimeComparator(int sortType) {
         this.sortType = sortType;
     }
 
@@ -20,16 +20,16 @@ public class GoodsComparator implements Comparator<NewGoodsBean> {
     public int compare(NewGoodsBean o1, NewGoodsBean o2) {
         if (sortType == -1) {
             //降序
-            return getPrice(o2.getCurrencyPrice()) - getPrice(o1.getCurrencyPrice());
+            return (int) (getTime(o2.getAddTime()) - getTime(o1.getAddTime()));
         } else if (sortType == 1) {
             //升序
-            return getPrice(o1.getCurrencyPrice()) - getPrice(o2.getCurrencyPrice());
+            return (int) (getTime(o1.getAddTime()) - getTime(o2.getAddTime()));
         } else {
             return 0;
         }
     }
 
-    private int getPrice(String price) {
-        return Integer.parseInt(price.replace("￥", ""));
+    private long getTime(String addTime) {
+        return Long.parseLong(addTime);
     }
 }

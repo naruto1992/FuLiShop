@@ -122,6 +122,13 @@ public class ApiDao {
                 .execute(listener);
     }
 
+    /**
+     * 加载商品详情
+     *
+     * @param context
+     * @param goodId
+     * @param listener
+     */
     public static void loadGoodsDetail(Context context, int goodId, OkHttpUtils.OnCompleteListener listener) {
         OkHttpUtils<GoodsDetailsBean> utils = new OkHttpUtils<>(context);
         utils.setRequestUrl(I.REQUEST_FIND_GOOD_DETAILS)
@@ -130,10 +137,36 @@ public class ApiDao {
                 .execute(listener);
     }
 
-    public static void loadGoodsList(Context context, String request, int cartId, int pageId, OkHttpUtils.OnCompleteListener listener) {
+    /**
+     * 加载精选二级商品列表
+     *
+     * @param context
+     * @param catId
+     * @param pageId
+     * @param listener
+     */
+    public static void loadGoodsList(Context context, int catId, int pageId, OkHttpUtils.OnCompleteListener listener) {
         OkHttpUtils<NewGoodsBean[]> utils = new OkHttpUtils<>(context);
-        utils.setRequestUrl(request)
-                .addParam(I.NewAndBoutiqueGoods.CAT_ID, "" + cartId)
+        utils.setRequestUrl(I.REQUEST_FIND_NEW_BOUTIQUE_GOODS)
+                .addParam(I.NewAndBoutiqueGoods.CAT_ID, "" + catId)
+                .addParam(I.PAGE_ID, "" + pageId)
+                .addParam(I.PAGE_SIZE, "" + I.PAGE_SIZE_DEFAULT)
+                .targetClass(NewGoodsBean[].class)
+                .execute(listener);
+    }
+
+    /**
+     * 下载分类中二级页面一组商品信息
+     *
+     * @param context
+     * @param catId
+     * @param pageId
+     * @param listener
+     */
+    public static void loadGoodsListByCat(Context context, int catId, int pageId, OkHttpUtils.OnCompleteListener listener) {
+        OkHttpUtils<NewGoodsBean[]> utils = new OkHttpUtils<>(context);
+        utils.setRequestUrl(I.REQUEST_FIND_GOODS_DETAILS)
+                .addParam(I.GoodsDetails.KEY_CAT_ID, "" + catId)
                 .addParam(I.PAGE_ID, "" + pageId)
                 .addParam(I.PAGE_SIZE, "" + I.PAGE_SIZE_DEFAULT)
                 .targetClass(NewGoodsBean[].class)

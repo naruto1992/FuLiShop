@@ -8,10 +8,13 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -19,6 +22,7 @@ import cn.ucai.fulishop.R;
 import cn.ucai.fulishop.api.I;
 import cn.ucai.fulishop.bean.NewGoodsBean;
 import cn.ucai.fulishop.listener.ListListener;
+import cn.ucai.fulishop.utils.DateUtil;
 import cn.ucai.fulishop.utils.ImageLoader;
 import cn.ucai.fulishop.view.FooterViewHolder;
 
@@ -68,6 +72,18 @@ public class NewGoodsAdapter extends RecyclerView.Adapter implements View.OnClic
         notifyDataSetChanged();
     }
 
+    public void sortByPrice(int type) {
+        GoodsPriceComparator comparator = new GoodsPriceComparator(type);
+        Collections.sort(getData(), comparator);
+        notifyDataSetChanged();
+    }
+
+    public void sortByTime(int type) {
+        GoodsTimeComparator comparator = new GoodsTimeComparator(type);
+        Collections.sort(getData(), comparator);
+        notifyDataSetChanged();
+    }
+
     @Override
     public int getItemCount() {
         return goodsList == null ? 0 : goodsList.size();
@@ -88,6 +104,8 @@ public class NewGoodsAdapter extends RecyclerView.Adapter implements View.OnClic
         GoodsItemHolder itemViewHolder = (GoodsItemHolder) holder;
         itemViewHolder.name.setText(bean.getGoodsName());
         itemViewHolder.price.setText(bean.getCurrencyPrice());
+        long time = Long.parseLong(bean.getAddTime());
+        itemViewHolder.time.setText(getTime(bean.getAddTime()));
         //加载图片
         ImageLoader.build(I.DOWNLOAD_IMG_URL)
                 .url(bean.getGoodsThumb())
@@ -97,6 +115,17 @@ public class NewGoodsAdapter extends RecyclerView.Adapter implements View.OnClic
 //                .setDragging(mScrollState != RecyclerView.SCROLL_STATE_DRAGGING)
                 .showImage(context);
         itemViewHolder.itemView.setTag(position);
+    }
+
+    private String getTime(String time) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd  HH:MM:SS", Locale.CHINA);
+        Date d;
+        if (time.length() == 13) {
+            d = new Date(Long.parseLong(time));
+        } else {
+            d = new Date(Long.parseLong(time) * 1000);
+        }
+        return sdf.format(d);
     }
 
     @Override
@@ -114,6 +143,8 @@ public class NewGoodsAdapter extends RecyclerView.Adapter implements View.OnClic
         TextView name;
         @BindView(R.id.newGoodsPrice)
         TextView price;
+        @BindView(R.id.newGoodsAddTime)
+        TextView time;
 
         public GoodsItemHolder(View itemView) {
             super(itemView);

@@ -1,6 +1,7 @@
 package cn.ucai.fulishop.fragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -20,6 +21,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.ucai.fulishop.R;
+import cn.ucai.fulishop.activity.GoodsListActivity;
 import cn.ucai.fulishop.adapter.BoutiquesAdapter;
 import cn.ucai.fulishop.api.ApiDao;
 import cn.ucai.fulishop.api.I;
@@ -135,6 +137,9 @@ public class FragmentBoutique extends Fragment implements SwipeRefreshLayout.OnR
     @Override
     public void onItemClick(int position, int itemType) {
         BoutiqueBean bean = adapter.getData().get(position);
-        MFGT.startGoodsListActivity(getActivity(), bean.getTitle(), I.REQUEST_FIND_NEW_BOUTIQUE_GOODS, bean.getId());
+        Intent intent = new Intent(getActivity(), GoodsListActivity.class);
+        intent.putExtra("title", bean.getTitle());
+        intent.putExtra("cartId", bean.getId());
+        MFGT.startActivityByIntent(getActivity(), intent);
     }
 }

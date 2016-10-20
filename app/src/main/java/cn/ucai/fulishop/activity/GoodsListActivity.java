@@ -40,8 +40,7 @@ public class GoodsListActivity extends BaseActivity implements SwipeRefreshLayou
     @BindView(R.id.goodsListRv)
     RecyclerView goodsListRv;
 
-    String title;
-    String request; //请求方法
+    String title; //标题
     int cartId; //请求参数
     int pageId = 1;
 
@@ -57,7 +56,6 @@ public class GoodsListActivity extends BaseActivity implements SwipeRefreshLayou
         mContext = this;
 
         title = getIntent().getStringExtra("title");
-        request = getIntent().getStringExtra("request");
         cartId = getIntent().getIntExtra("cartId", 0);
         initView();
         loadGoodsList(I.ACTION_DOWNLOAD, pageId);
@@ -97,7 +95,7 @@ public class GoodsListActivity extends BaseActivity implements SwipeRefreshLayou
     }
 
     private void loadGoodsList(final int action, int pageId) {
-        ApiDao.loadGoodsList(mContext, request, cartId, pageId, new OkHttpUtils.OnCompleteListener<NewGoodsBean[]>() {
+        ApiDao.loadGoodsList(mContext, cartId, pageId, new OkHttpUtils.OnCompleteListener<NewGoodsBean[]>() {
             @Override
             public void onStart() {
                 if (action != I.ACTION_PULL_DOWN) {

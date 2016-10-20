@@ -2,6 +2,7 @@ package cn.ucai.fulishop.view;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
@@ -17,9 +18,11 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.ucai.fulishop.R;
+import cn.ucai.fulishop.activity.CatListActivity;
 import cn.ucai.fulishop.adapter.CategoryChildAdapter;
 import cn.ucai.fulishop.api.ApiDao;
 import cn.ucai.fulishop.api.I;
+import cn.ucai.fulishop.bean.CartBean;
 import cn.ucai.fulishop.bean.CategoryChildBean;
 import cn.ucai.fulishop.bean.CategoryGroupBean;
 import cn.ucai.fulishop.listener.ListListener.OnItemClickListener;
@@ -143,9 +146,6 @@ public class CategoryItemView extends LinearLayout implements OnItemClickListene
         manager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
             @Override
             public int getSpanSize(int position) {
-                if (childListAdapter.getItemViewType(position) == I.TYPE_FOOTER) {
-                    return 2;
-                }
                 return 1;
             }
         });
@@ -166,8 +166,11 @@ public class CategoryItemView extends LinearLayout implements OnItemClickListene
     @Override
     public void onItemClick(int position, int itemType) {
         //默认type为0，不用判断
-        CategoryChildBean bean = childListAdapter.getList().get(position);
-        MFGT.startGoodsListActivity((Activity) mContext, bean.getName(), I.REQUEST_FIND_GOODS_DETAILS, bean.getId());
+        ArrayList<CategoryChildBean> list = childListAdapter.getList();
+        Intent intent = new Intent(mContext, CatListActivity.class);
+        intent.putExtra("catChildList", list);
+        intent.putExtra("position", position);
+        MFGT.startActivityByIntent((Activity) mContext, intent);
     }
 
 }

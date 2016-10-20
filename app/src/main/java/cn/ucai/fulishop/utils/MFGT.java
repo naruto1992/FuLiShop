@@ -1,9 +1,11 @@
 package cn.ucai.fulishop.utils;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 
 import cn.ucai.fulishop.R;
+import cn.ucai.fulishop.activity.GoodsListActivity;
 import cn.ucai.fulishop.activity.MainActivity;
 
 
@@ -28,4 +30,13 @@ public class MFGT { //move from go to
         context.startActivity(intent);
         context.overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
     }
+
+    public static void startGoodsListActivity(Activity context, String title, String request, int cartId) {
+        Intent intent = new Intent(context, GoodsListActivity.class);
+        intent.putExtra("title", title);
+        intent.putExtra("request", request);
+        intent.putExtra("cartId", cartId);
+        startActivityByIntent(context, intent);
+    }
+
 }

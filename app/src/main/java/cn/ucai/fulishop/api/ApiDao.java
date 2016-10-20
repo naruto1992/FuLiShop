@@ -65,15 +65,12 @@ public class ApiDao {
      *
      * @param context
      * @param groupId
-     * @param pageId
      * @param listener
      */
-    public static void loadCatChildList(Context context, int groupId, int pageId, OkHttpUtils.OnCompleteListener listener) {
+    public static void loadCatChildList(Context context, int groupId, OkHttpUtils.OnCompleteListener listener) {
         OkHttpUtils<CategoryChildBean[]> utils = new OkHttpUtils<>(context);
         utils.setRequestUrl(I.REQUEST_FIND_CATEGORY_CHILDREN)
                 .addParam(I.CategoryChild.PARENT_ID, "" + groupId)
-                .addParam(I.PAGE_ID, "" + pageId)
-                .addParam(I.PAGE_SIZE, "" + I.PAGE_SIZE_DEFAULT)
                 .targetClass(CategoryChildBean[].class)
                 .execute(listener);
     }
@@ -83,16 +80,13 @@ public class ApiDao {
      *
      * @param context
      * @param userName
-     * @param pageId
      * @param listener
      */
-    public static void loadCartList(Context context, String userName, int pageId, OkHttpUtils.OnCompleteListener listener) {
-        OkHttpUtils<CartBean[]> utils = new OkHttpUtils<>(context);
+    public static void loadCartList(Context context, String userName, OkHttpUtils.OnCompleteListener listener) {
+        OkHttpUtils<String> utils = new OkHttpUtils<>(context);
         utils.setRequestUrl(I.REQUEST_FIND_CARTS)
                 .addParam(I.Cart.USER_NAME, userName)
-                .addParam(I.PAGE_ID, "" + pageId)
-                .addParam(I.PAGE_SIZE, "" + I.PAGE_SIZE_DEFAULT)
-                .targetClass(CartBean[].class)
+                .targetClass(String.class)
                 .execute(listener);
     }
 
@@ -133,6 +127,16 @@ public class ApiDao {
         utils.setRequestUrl(I.REQUEST_FIND_GOOD_DETAILS)
                 .addParam(I.GoodsDetails.KEY_GOODS_ID, "" + goodId)
                 .targetClass(GoodsDetailsBean.class)
+                .execute(listener);
+    }
+
+    public static void loadGoodsList(Context context, String request, int cartId, int pageId, OkHttpUtils.OnCompleteListener listener) {
+        OkHttpUtils<NewGoodsBean[]> utils = new OkHttpUtils<>(context);
+        utils.setRequestUrl(request)
+                .addParam(I.NewAndBoutiqueGoods.CAT_ID, "" + cartId)
+                .addParam(I.PAGE_ID, "" + pageId)
+                .addParam(I.PAGE_SIZE, "" + I.PAGE_SIZE_DEFAULT)
+                .targetClass(NewGoodsBean[].class)
                 .execute(listener);
     }
 

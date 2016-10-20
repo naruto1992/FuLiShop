@@ -1,22 +1,12 @@
-package cn.ucai.fulishop.fragment;
+package cn.ucai.fulishop.activity;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
-import android.os.Handler;
-import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
+import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
-
-import com.google.gson.Gson;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,61 +14,57 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.ucai.fulishop.R;
-import cn.ucai.fulishop.activity.GoodsDetailActivity;
 import cn.ucai.fulishop.adapter.NewGoodsAdapter;
 import cn.ucai.fulishop.api.ApiDao;
 import cn.ucai.fulishop.api.I;
 import cn.ucai.fulishop.bean.NewGoodsBean;
-import cn.ucai.fulishop.listener.ListListener.OnItemClickListener;
+import cn.ucai.fulishop.listener.ListListener;
 import cn.ucai.fulishop.utils.DialogUtil;
-import cn.ucai.fulishop.utils.ImageLoader;
 import cn.ucai.fulishop.utils.ListUtil;
 import cn.ucai.fulishop.utils.MFGT;
 import cn.ucai.fulishop.utils.OkHttpUtils;
 import cn.ucai.fulishop.utils.ToastUtil;
-import cn.ucai.fulishop.view.FooterViewHolder;
-import cn.ucai.fulishop.view.LoadingDialog;
 import cn.ucai.fulishop.view.SpaceItemDecoration;
+import cn.ucai.fulishop.view.TitleBar;
 
-/**
- * Created by Shinelon on 2016/10/13.
- */
-
-public class FragmentNewgoods extends Fragment implements OnRefreshListener, OnItemClickListener {
+public class GoodsListActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener, ListListener.OnItemClickListener {
 
     Context mContext;
 
+    @BindView(R.id.goodsListTitleBar)
+    TitleBar goodsListTitleBar;
+
+    @BindView(R.id.goodsListSrl)
+    SwipeRefreshLayout goodsListSrl;
+
+    @BindView(R.id.goodsListRv)
+    RecyclerView goodsListRv;
+
+    String title;
+    String request; //请求方法
+    int cartId; //请求参数
+    int pageId = 1;
+
+    List<NewGoodsBean> goodsList = new ArrayList<>();
     NewGoodsAdapter adapter;
-    List<NewGoodsBean> goodsList;
-
-    @BindView(R.id.newGoodsRv)
-    RecyclerView newGoodsRv;
-
-    @BindView(R.id.newGoodsSrl)
-    SwipeRefreshLayout newGoodsSrl;
-
     GridLayoutManager mLayoutManager;
 
-    int pageId = 1;
-    LoadingDialog loadingDialog;
-
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View layout = inflater.inflate(R.layout.fragment_newgoods, container, false);
-        ButterKnife.bind(this, layout);
-        return layout;
-    }
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_goods_list);
+        ButterKnife.bind(this);
+        mContext = this;
 
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        mContext = getActivity();
+        title = getIntent().getStringExtra("title");
+        request = getIntent().getStringExtra("request");
+        cartId = getIntent().getIntExtra("cartId", 0);
         initView();
-        loadNewGoodsList(I.ACTION_DOWNLOAD, pageId); //第一次下载
+        loadGoodsList(I.ACTION_DOWNLOAD, pageId);
     }
 
     private void initView() {
-        goodsList = new ArrayList<>();
+        goodsListTitleBar.init(this, title);
         adapter = new NewGoodsAdapter(mContext, goodsList);
         adapter.setClickListener(this);
         mLayoutManager = new GridLayoutManager(mContext, 2);
@@ -88,17 +74,15 @@ public class FragmentNewgoods extends Fragment implements OnRefreshListener, OnI
                 return 1;
             }
         });
-        newGoodsRv.addItemDecoration(new SpaceItemDecoration(20));
-        newGoodsRv.setLayoutManager(mLayoutManager);
-        newGoodsRv.setAdapter(adapter);
-        //
+        goodsListRv.addItemDecoration(new SpaceItemDecoration(20));
+        goodsListRv.setLayoutManager(mLayoutManager);
+        goodsListRv.setAdapter(adapter);
         initListener();
-        loadingDialog = new LoadingDialog.Builder(mContext).create();
     }
 
     private void initListener() {
-        newGoodsSrl.setOnRefreshListener(this);
-        newGoodsRv.addOnScrollListener(new RecyclerView.OnScrollListener() {
+        goodsListSrl.setOnRefreshListener(this);
+        goodsListRv.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
@@ -106,18 +90,23 @@ public class FragmentNewgoods extends Fragment implements OnRefreshListener, OnI
                 int lastPostion = mLayoutManager.findLastVisibleItemPosition();
                 if (lastPostion == adapter.getItemCount() - 1 && adapter.isMore() && newState == RecyclerView.SCROLL_STATE_IDLE) {
                     pageId++;
-                    loadNewGoodsList(I.ACTION_PULL_UP, pageId);
+                    loadGoodsList(I.ACTION_PULL_UP, pageId);
                 }
             }
         });
     }
 
-    private void loadNewGoodsList(final int action, int pageId) {
-        ApiDao.loadNewGoodsList(mContext, pageId, new OkHttpUtils.OnCompleteListener<NewGoodsBean[]>() {
+    private void loadGoodsList(final int action, int pageId) {
+        ApiDao.loadGoodsList(mContext, request, cartId, pageId, new OkHttpUtils.OnCompleteListener<NewGoodsBean[]>() {
             @Override
             public void onStart() {
                 if (action != I.ACTION_PULL_DOWN) {
-                    loadingDialog.show();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            loadingDialog.show();
+                        }
+                    });
                 }
             }
 
@@ -134,7 +123,7 @@ public class FragmentNewgoods extends Fragment implements OnRefreshListener, OnI
                             break;
                         case I.ACTION_PULL_DOWN: //下拉刷新
                             adapter.init(newgoodsList);
-                            newGoodsSrl.setRefreshing(false);
+                            goodsListSrl.setRefreshing(false);
                             break;
                         case I.ACTION_PULL_UP: //上拉加载
                             adapter.loadMore(newgoodsList);
@@ -147,35 +136,32 @@ public class FragmentNewgoods extends Fragment implements OnRefreshListener, OnI
             }
 
             @Override
-            public void onError(final String error) {
+            public void onError(String error) {
                 if (action == I.ACTION_PULL_DOWN) {
-                    newGoodsSrl.setRefreshing(false);
+                    goodsListSrl.setRefreshing(false);
                 }
                 if (loadingDialog.isShowing()) {
                     loadingDialog.dismiss();
                 }
-                ToastUtil.showOnUI(getActivity(), error);
+                ToastUtil.showOnUI(GoodsListActivity.this, error);
             }
         });
-
     }
 
     @Override
     public void onRefresh() {
         pageId = 1;
-        loadNewGoodsList(I.ACTION_PULL_DOWN, pageId);
-        newGoodsSrl.setEnabled(true);
-        newGoodsSrl.setRefreshing(true);
-
+        loadGoodsList(I.ACTION_PULL_DOWN, pageId);
+        goodsListSrl.setEnabled(true);
+        goodsListSrl.setRefreshing(true);
     }
 
     @Override
     public void onItemClick(int position, int itemType) {
         NewGoodsBean bean = adapter.getData().get(position);
         int goodsId = bean.getGoodsId();
-        Intent intent = new Intent(getActivity(), GoodsDetailActivity.class);
+        Intent intent = new Intent(this, GoodsDetailActivity.class);
         intent.putExtra(I.NewGoods.KEY_GOODS_ID, goodsId);
-        MFGT.startActivityByIntent(getActivity(), intent);
+        MFGT.startActivityByIntent(this, intent);
     }
-
 }

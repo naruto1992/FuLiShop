@@ -1,5 +1,6 @@
 package cn.ucai.fulishop.view;
 
+import android.app.Activity;
 import android.content.Context;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -24,6 +25,7 @@ import cn.ucai.fulishop.bean.CategoryGroupBean;
 import cn.ucai.fulishop.listener.ListListener.OnItemClickListener;
 import cn.ucai.fulishop.utils.ImageLoader;
 import cn.ucai.fulishop.utils.ListUtil;
+import cn.ucai.fulishop.utils.MFGT;
 import cn.ucai.fulishop.utils.OkHttpUtils;
 import cn.ucai.fulishop.utils.ToastUtil;
 
@@ -45,10 +47,8 @@ public class CategoryItemView extends LinearLayout implements OnItemClickListene
 
     CategoryGroupBean mGroupBean;
 
-    int childPageId = 1;
     RecyclerView childListRv;
     CategoryChildAdapter childListAdapter;
-    //    boolean needFooter = true;
     boolean isShown = false;
 
     public CategoryItemView(Context context) {
@@ -94,7 +94,7 @@ public class CategoryItemView extends LinearLayout implements OnItemClickListene
     @OnClick(R.id.category_item_layout)
     public void showChildList(View v) {
         if (childListRv == null) {
-            loadChildList(childPageId);
+            loadChildList();
         } else {
             if (isShown) {
                 parent.removeView(childListRv);
@@ -107,9 +107,9 @@ public class CategoryItemView extends LinearLayout implements OnItemClickListene
         }
     }
 
-    private void loadChildList(final int pageId) {
+    private void loadChildList() {
         final LoadingDialog loadingDialog = new LoadingDialog.Builder(mContext).create();
-        ApiDao.loadCatChildList(mContext, mGroupBean.getId(), pageId, new OkHttpUtils.OnCompleteListener<CategoryChildBean[]>() {
+        ApiDao.loadCatChildList(mContext, mGroupBean.getId(), new OkHttpUtils.OnCompleteListener<CategoryChildBean[]>() {
                     @Override
                     public void onStart() {
                         loadingDialog.show();
@@ -120,17 +120,7 @@ public class CategoryItemView extends LinearLayout implements OnItemClickListene
                         loadingDialog.dismiss();
                         if (result != null && result.length > 0) {
                             ArrayList<CategoryChildBean> childList = ListUtil.array2List(result);
-                            if (pageId == 1) {
-                                initAndShowChildList(childList);
-                            } else {
-                                childListAdapter.loadMore(childList);
-                            }
-                            childListAdapter.setMore(childList.size() == I.PAGE_SIZE_DEFAULT);
-                            if (childListAdapter.isMore()) {
-                                childListAdapter.setFooterText("更多分类");
-                            } else {
-                                childListAdapter.setFooterText("没有更多分类了");
-                            }
+                            initAndShowChildList(childList);
                         }
                     }
 
@@ -175,16 +165,9 @@ public class CategoryItemView extends LinearLayout implements OnItemClickListene
 
     @Override
     public void onItemClick(int position, int itemType) {
-        if (itemType == I.TYPE_FOOTER) {
-            if (childListAdapter.isMore()) {
-                childPageId++;
-                loadChildList(childPageId);
-            } else {
-                childListAdapter.setFooterText("没有更多分类了");
-            }
-        } else {
-            CategoryChildBean bean = childListAdapter.getList().get(position);
-            ToastUtil.show(mContext, bean.toString());
-        }
+        //默认type为0，不用判断
+        CategoryChildBean bean = childListAdapter.getList().get(position);
+        MFGT.startGoodsListActivity((Activity) mContext, bean.getName(), I.REQUEST_FIND_GOODS_DETAILS, bean.getId());
     }
+
 }

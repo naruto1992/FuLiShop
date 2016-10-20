@@ -19,11 +19,11 @@
             </intent-filter>
         </activity>
         <activity android:name=".activity.MainActivity" />
-        <activity android:name=".activity.CatChildDetailActivity" />
+        <activity android:name=".activity.GoodsListActivity" />
         <activity android:name=".activity.LoginActivity" />
         <activity android:name=".activity.RegisterActivity" />
         <activity android:name=".activity.GoodsDetailActivity" />
-        <activity android:name=".activity.BoutiqueChildActivity" />
+        <activity android:name=".activity.CatListActivity"></activity>
     </application>
 
 </manifest>

@@ -28,6 +28,7 @@ import cn.ucai.fulishop.listener.ListListener.OnItemClickListener;
 import cn.ucai.fulishop.utils.DialogUtil;
 import cn.ucai.fulishop.utils.ImageLoader;
 import cn.ucai.fulishop.utils.ListUtil;
+import cn.ucai.fulishop.utils.MFGT;
 import cn.ucai.fulishop.utils.OkHttpUtils;
 import cn.ucai.fulishop.utils.ToastUtil;
 import cn.ucai.fulishop.view.LoadingDialog;
@@ -134,5 +135,6 @@ public class FragmentBoutique extends Fragment implements SwipeRefreshLayout.OnR
     @Override
     public void onItemClick(int position, int itemType) {
         BoutiqueBean bean = adapter.getData().get(position);
+        MFGT.startGoodsListActivity(getActivity(), bean.getTitle(), I.REQUEST_FIND_NEW_BOUTIQUE_GOODS, bean.getId());
     }
 }

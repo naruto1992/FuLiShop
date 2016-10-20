@@ -12,8 +12,8 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +22,6 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -91,7 +90,7 @@ public class FragmentCart extends Fragment implements SwipeRefreshLayout.OnRefre
         if (FuLiShopApplication.getInstance().hasLogined()) {
             btnCartLogin.setVisibility(View.GONE);
             cartSrl.setVisibility(View.VISIBLE);
-            loadCartList(I.ACTION_DOWNLOAD, pageId);
+            loadCartList(I.ACTION_DOWNLOAD);
         } else {
             btnCartLogin.setVisibility(View.VISIBLE);
             cartSrl.setVisibility(View.GONE);
@@ -113,7 +112,7 @@ public class FragmentCart extends Fragment implements SwipeRefreshLayout.OnRefre
                         // 已登录
                         btnCartLogin.setVisibility(View.GONE);
                         cartSrl.setVisibility(View.VISIBLE);
-                        loadCartList(I.ACTION_DOWNLOAD, pageId);
+                        loadCartList(I.ACTION_DOWNLOAD);
                         break;
                     case I.HASLOGINOUT:
                         // 已注销
@@ -125,9 +124,9 @@ public class FragmentCart extends Fragment implements SwipeRefreshLayout.OnRefre
         broadcastManager.registerReceiver(mReceiver, intentFilter);
     }
 
-    private void loadCartList(final int action, final int pageId) {
+    private void loadCartList(final int action) {
         userName = FuLiShopApplication.getInstance().getUserName();
-        ApiDao.loadCartList(mContext, userName, pageId, new OkHttpUtils.OnCompleteListener<CartBean[]>() {
+        ApiDao.loadCartList(mContext, userName, new OkHttpUtils.OnCompleteListener<String>() {
 
             @Override
             public void onStart() {
@@ -137,30 +136,31 @@ public class FragmentCart extends Fragment implements SwipeRefreshLayout.OnRefre
             }
 
             @Override
-            public void onSuccess(CartBean[] result) {
+            public void onSuccess(String result) {
                 if (loadingDialog.isShowing()) {
                     loadingDialog.dismiss();
                 }
-                cartSrl.setRefreshing(false);
-                if (result != null && result.length > 0) {
-                    noCartHint.setVisibility(View.GONE);
-                    ArrayList<CartBean> list = ListUtil.array2List(result);
+                if (result != null) {
+                    CartBean[] cartBeens = new Gson().fromJson(result, CartBean[].class);
+                    ArrayList<CartBean> list = ListUtil.array2List(cartBeens);
                     switch (action) {
                         case I.ACTION_DOWNLOAD:
                             initList(list);
                             break;
                         case I.ACTION_PULL_DOWN:
                             adapter.init(list);
-                            break;
-                        case I.ACTION_PULL_UP:
-                            adapter.loadMore(list);
+                            cartSrl.setRefreshing(false);
                             break;
                     }
-                    adapter.setMore(list.size() == I.PAGE_SIZE_DEFAULT);
+                    count = list.size();
+                    if (count != 0) {
+                        noCartHint.setVisibility(View.GONE);
+                    }
                 } else {
+                    count = 0;
                     noCartHint.setVisibility(View.VISIBLE);
+                    cartSrl.setRefreshing(false);
                 }
-                count += result.length;
                 sendBroadCast(count);
             }
 
@@ -169,7 +169,9 @@ public class FragmentCart extends Fragment implements SwipeRefreshLayout.OnRefre
                 if (loadingDialog.isShowing()) {
                     loadingDialog.dismiss();
                 }
-                cartSrl.setRefreshing(false);
+                if (action == I.ACTION_PULL_DOWN) {
+                    cartSrl.setRefreshing(false);
+                }
                 ToastUtil.showOnUI((Activity) mContext, error);
             }
         });
@@ -198,24 +200,14 @@ public class FragmentCart extends Fragment implements SwipeRefreshLayout.OnRefre
         cartRv.addItemDecoration(new SpaceItemDecoration(20));
         //
         cartSrl.setOnRefreshListener(this);
-        cartRv.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-                int last = manager.findLastVisibleItemPosition();
-                if (last == adapter.getItemCount() - 1 && adapter.isMore() && newState == RecyclerView.SCROLL_STATE_IDLE) {
-                    pageId++;
-                    loadCartList(I.ACTION_PULL_UP, pageId);
-                }
-            }
-        });
+        noCartHint.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void onRefresh() {
         count = 0;
-        pageId = 1;
-        loadCartList(I.ACTION_PULL_DOWN, pageId);
+        cartSrl.setEnabled(true);
+        loadCartList(I.ACTION_PULL_DOWN);
     }
 
     @Override
@@ -253,8 +245,7 @@ public class FragmentCart extends Fragment implements SwipeRefreshLayout.OnRefre
 
     @Override
     public void onItemClick(int position) {
-//        CartBean bean = adapter.getCartList().get(position);
-//        ToastUtil.show(mContext, bean.toString());
+        CartBean bean = adapter.getCartList().get(position);
     }
 
     @Override

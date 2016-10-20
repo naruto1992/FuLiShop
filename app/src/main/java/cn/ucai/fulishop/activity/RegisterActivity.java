@@ -2,9 +2,11 @@ package cn.ucai.fulishop.activity;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -15,10 +17,14 @@ import cn.ucai.fulishop.bean.Result;
 import cn.ucai.fulishop.utils.EditUtil;
 import cn.ucai.fulishop.utils.OkHttpUtils;
 import cn.ucai.fulishop.utils.ToastUtil;
+import cn.ucai.fulishop.view.TitleBar;
 
-public class RegisterActivity extends BackActivity {
+public class RegisterActivity extends BaseActivity {
 
     Context mContext;
+
+    @BindView(R.id.registerTitleBar)
+    TitleBar registerTitleBar;
 
     @BindView(R.id.etUserName)
     EditText etUserName;
@@ -43,7 +49,7 @@ public class RegisterActivity extends BackActivity {
         setContentView(R.layout.activity_register);
         ButterKnife.bind(this);
         mContext = this;
-        actionBar.setTitle("账户注册");
+        registerTitleBar.init(this, "账户注册");
     }
 
     @OnClick(R.id.btnRegister)

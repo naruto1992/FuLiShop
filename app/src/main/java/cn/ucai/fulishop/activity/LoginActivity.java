@@ -3,11 +3,14 @@ package cn.ucai.fulishop.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.google.gson.Gson;
 
@@ -23,10 +26,16 @@ import cn.ucai.fulishop.utils.EditUtil;
 import cn.ucai.fulishop.utils.MFGT;
 import cn.ucai.fulishop.utils.OkHttpUtils;
 import cn.ucai.fulishop.utils.ToastUtil;
+import cn.ucai.fulishop.view.TitleBar;
 
-public class LoginActivity extends BackActivity {
+import static android.support.v7.app.ActionBar.DISPLAY_SHOW_CUSTOM;
+
+public class LoginActivity extends BaseActivity {
 
     Context mContext;
+
+    @BindView(R.id.loginTitleBar)
+    TitleBar loginTitleBar;
 
     @BindView(R.id.etLoginUserName)
     EditText etLoginUserName;
@@ -42,7 +51,7 @@ public class LoginActivity extends BackActivity {
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
         mContext = this;
-        actionBar.setTitle("账户登录");
+        loginTitleBar.init(this, "账户登录");
     }
 
     @OnClick(R.id.btn_login)

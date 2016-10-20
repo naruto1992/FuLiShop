@@ -28,37 +28,15 @@ public class CategoryChildAdapter extends RecyclerView.Adapter<RecyclerView.View
     Context context;
     ArrayList<CategoryChildBean> list;
     RecyclerView mParent;
-    String footerText = "更多分类";
-    boolean isMore = true;
-    boolean needFooter;
     ListListener.OnItemClickListener listener;
 
     public CategoryChildAdapter(Context context, ArrayList<CategoryChildBean> list) {
         this.context = context;
         this.list = list;
-        this.needFooter = list.size() < I.PAGE_SIZE_DEFAULT ? false : true;
     }
 
     public ArrayList<CategoryChildBean> getList() {
         return list;
-    }
-
-    public boolean isMore() {
-        return isMore;
-    }
-
-    public void setMore(boolean more) {
-        isMore = more;
-    }
-
-    public void loadMore(ArrayList<CategoryChildBean> list) {
-        this.list.addAll(list);
-        notifyDataSetChanged();
-    }
-
-    public void setFooterText(String text) {
-        this.footerText = text;
-        notifyDataSetChanged();
     }
 
     public void setClickListener(ListListener.OnItemClickListener listener) {
@@ -67,53 +45,20 @@ public class CategoryChildAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     @Override
     public int getItemCount() {
-        if (list == null) {
-            list = new ArrayList<>();
-        }
-        if (!needFooter) {
-            return list.size();
-        }
-        return list.size() + 1;
+        return list == null ? 0 : list.size();
     }
 
     @Override
-    public int getItemViewType(int position) {
-        if (needFooter && position == getItemCount() - 1) {
-            return I.TYPE_FOOTER;
-        } else {
-            return I.TYPE_ITEM;
-        }
-    }
-
-    @Override
-
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         mParent = (RecyclerView) parent;
         LayoutInflater inflater = LayoutInflater.from(context);
-        View layout = null;
-        RecyclerView.ViewHolder holder = null;
-        switch (viewType) {
-            case I.TYPE_FOOTER:
-                layout = inflater.inflate(R.layout.item_footer, null);
-                holder = new FooterViewHolder(layout);
-                break;
-            case I.TYPE_ITEM:
-                layout = inflater.inflate(R.layout.category_child_item, null);
-                holder = new CategoryChildViewHolder(layout);
-                break;
-        }
+        View layout = inflater.inflate(R.layout.category_child_item, null);
         layout.setOnClickListener(this);
-        return holder;
+        return new CategoryChildViewHolder(layout);
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        if (getItemViewType(position) == I.TYPE_FOOTER) {
-            FooterViewHolder footerViewHolder = (FooterViewHolder) holder;
-            footerViewHolder.footer.setText(footerText);
-            footerViewHolder.itemView.setTag(position);
-            return;
-        }
         CategoryChildViewHolder itemViewHolder = (CategoryChildViewHolder) holder;
         CategoryChildBean childBean = list.get(position);
         itemViewHolder.tvCategoryChildName.setText(childBean.getName());
@@ -145,9 +90,8 @@ public class CategoryChildAdapter extends RecyclerView.Adapter<RecyclerView.View
     @Override
     public void onClick(View view) {
         int position = (int) view.getTag();
-        int itemType = getItemViewType(position);
         if (listener != null) {
-            listener.onItemClick(position, itemType);
+            listener.onItemClick(position, I.TYPE_ITEM);
         }
     }
 }

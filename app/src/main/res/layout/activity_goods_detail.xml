@@ -6,77 +6,10 @@
     android:background="@color/windows_color"
     android:orientation="vertical">
 
-    <RelativeLayout
+    <cn.ucai.fulishop.view.TitleBar
+        android:id="@+id/detailTitleBar"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:background="@color/main_orange">
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:gravity="center_vertical">
-
-            <ImageView
-                android:layout_width="20dp"
-                android:layout_height="30dp"
-                android:layout_marginLeft="5dp"
-                android:scaleType="fitXY"
-                android:src="@drawable/selector_back" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:text="商品详情"
-                android:textColor="@color/white"
-                android:textSize="18sp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="5dp"
-            android:gravity="center_vertical">
-
-            <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp">
-
-                <ImageView
-                    android:id="@+id/ivAddToCart"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:src="@drawable/bg_cart_selected" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignRight="@id/ivAddToCart"
-                    android:layout_alignTop="@id/ivAddToCart"
-                    android:text="0"
-                    android:textSize="16sp" />
-            </RelativeLayout>
-
-            <ImageView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_margin="5dp"
-                android:src="@drawable/selector_collect" />
-
-            <ImageView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_margin="5dp"
-                android:src="@drawable/selector_share" />
-        </LinearLayout>
-
-    </RelativeLayout>
-
+        android:layout_height="wrap_content" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -87,9 +20,10 @@
         android:padding="30dp">
 
         <TextView
+            android:id="@+id/goodsEnglishName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Monbento"
+            android:text=""
             android:textColor="@color/black"
             android:textSize="16sp" />
 
@@ -99,18 +33,20 @@
             android:layout_marginTop="6dp">
 
             <TextView
+                android:id="@+id/goodsName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
-                android:text="双层分格饭盒 绿色"
+                android:text=""
                 android:textColor="@color/black"
                 android:textSize="16sp" />
 
             <TextView
+                android:id="@+id/goodsCurrencyPrice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:text="￥293"
+                android:text=""
                 android:textColor="@color/red"
                 android:textSize="16sp" />
         </RelativeLayout>
@@ -131,18 +67,20 @@
                 android:id="@+id/fiGoodsDetail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:count="2"
+                android:layout_marginTop="4dp"
                 app:focus="0"
                 app:focus_color="@color/good_detaul_flow_indicator_focus"
                 app:normal_color="@color/line_color"
-                app:r="5dp"
-                app:space="3dp" />
+                app:r="6dp"
+                app:space="4dp" />
 
             <TextView
+                android:id="@+id/goodsBrief"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:text="@string/goods_detail" />
+                android:text=""
+                android:textSize="16sp" />
         </LinearLayout>
 
     </LinearLayout>

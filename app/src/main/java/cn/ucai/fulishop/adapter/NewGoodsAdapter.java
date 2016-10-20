@@ -9,6 +9,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
@@ -28,7 +30,6 @@ public class NewGoodsAdapter extends RecyclerView.Adapter implements View.OnClic
 
     Context context;
     List<NewGoodsBean> goodsList;
-    String footerText;
     RecyclerView parent;
     boolean isMore;//是否有更多的数据可加载
     ListListener.OnItemClickListener mListener;
@@ -67,56 +68,26 @@ public class NewGoodsAdapter extends RecyclerView.Adapter implements View.OnClic
         notifyDataSetChanged();
     }
 
-    public void setFooter(String footerText) {
-        this.footerText = footerText;
-        notifyDataSetChanged();
-    }
-
     @Override
     public int getItemCount() {
-        return goodsList == null ? 0 : goodsList.size() + 1;
-    }
-
-    @Override
-    public int getItemViewType(int position) {
-        if (position == getItemCount() - 1) {
-            return I.TYPE_FOOTER;
-        } else {
-            return I.TYPE_ITEM;
-        }
+        return goodsList == null ? 0 : goodsList.size();
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         this.parent = (RecyclerView) parent;
-        RecyclerView.ViewHolder holder = null;
         LayoutInflater inflater = LayoutInflater.from(context);
-        View layout = null;
-        switch (viewType) {
-            case I.TYPE_FOOTER:
-                layout = inflater.inflate(R.layout.item_footer, null);
-                holder = new FooterViewHolder(layout);
-                break;
-            case I.TYPE_ITEM:
-                layout = inflater.inflate(R.layout.newgoods_item, null);
-                layout.setOnClickListener(this);
-                holder = new GoodsItemHolder(layout);
-                break;
-        }
-        return holder;
+        View layout = inflater.inflate(R.layout.newgoods_item, null);
+        layout.setOnClickListener(this);
+        return new GoodsItemHolder(layout);
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        if (position == getItemCount() - 1) {
-            FooterViewHolder footerHolder = (FooterViewHolder) holder;
-            footerHolder.footer.setText(footerText);
-            return;
-        }
         NewGoodsBean bean = goodsList.get(position);
         GoodsItemHolder itemViewHolder = (GoodsItemHolder) holder;
         itemViewHolder.name.setText(bean.getGoodsName());
-        itemViewHolder.price.setText("原价:" + bean.getCurrencyPrice());
+        itemViewHolder.price.setText(bean.getCurrencyPrice());
         //加载图片
         ImageLoader.build(I.DOWNLOAD_IMG_URL)
                 .url(bean.getGoodsThumb())

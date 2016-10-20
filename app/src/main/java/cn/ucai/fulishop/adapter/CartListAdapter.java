@@ -39,7 +39,6 @@ import cn.ucai.fulishop.view.FooterViewHolder;
 public class CartListAdapter extends RecyclerView.Adapter<ViewHolder> implements View.OnLongClickListener {
     Context context;
     ArrayList<CartBean> cartList;
-    boolean isMore;
     RecyclerView mParent;
     CartListener cartListener;
     ListListener.OnItemLongClickListener onItemLongClickListener;
@@ -47,14 +46,6 @@ public class CartListAdapter extends RecyclerView.Adapter<ViewHolder> implements
     public CartListAdapter(Context context, ArrayList<CartBean> cartList) {
         this.context = context;
         this.cartList = cartList;
-    }
-
-    public boolean isMore() {
-        return isMore;
-    }
-
-    public void setMore(boolean more) {
-        isMore = more;
     }
 
     public ArrayList<CartBean> getCartList() {

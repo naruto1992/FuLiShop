@@ -1,6 +1,9 @@
 package cn.ucai.fulishop.api;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.support.v7.app.AlertDialog;
+import android.widget.EditText;
 
 import cn.ucai.fulishop.bean.BoutiqueBean;
 import cn.ucai.fulishop.bean.CartBean;
@@ -170,6 +173,77 @@ public class ApiDao {
                 .addParam(I.PAGE_ID, "" + pageId)
                 .addParam(I.PAGE_SIZE, "" + I.PAGE_SIZE_DEFAULT)
                 .targetClass(NewGoodsBean[].class)
+                .execute(listener);
+    }
+
+    /**
+     * 添加商品至购物车
+     *
+     * @param context
+     * @param goodId
+     * @param uerName
+     * @param count
+     * @param listener
+     */
+    public static void addGoodsToCart(Context context, int goodId, String uerName, int count, OkHttpUtils.OnCompleteListener listener) {
+        OkHttpUtils<MessageBean> utils = new OkHttpUtils<>(context);
+        utils.setRequestUrl(I.REQUEST_ADD_CART)
+                .addParam(I.Cart.GOODS_ID, "" + goodId)
+                .addParam(I.Cart.USER_NAME, uerName)
+                .addParam(I.Cart.COUNT, "" + count)
+                .addParam(I.Cart.IS_CHECKED, "" + true)
+                .targetClass(MessageBean.class)
+                .execute(listener);
+    }
+
+    /**
+     * 判断商品是否被收藏
+     *
+     * @param context
+     * @param goodId
+     * @param uerName
+     * @param listener
+     */
+    public static void isCollected(Context context, int goodId, String uerName, OkHttpUtils.OnCompleteListener listener) {
+        OkHttpUtils<MessageBean> utils = new OkHttpUtils<>(context);
+        utils.setRequestUrl(I.REQUEST_IS_COLLECT)
+                .addParam(I.Cart.GOODS_ID, "" + goodId)
+                .addParam(I.Cart.USER_NAME, uerName)
+                .targetClass(MessageBean.class)
+                .execute(listener);
+    }
+
+    /**
+     * 添加收藏
+     *
+     * @param context
+     * @param goodId
+     * @param uerName
+     * @param listener
+     */
+    public static void addCollect(Context context, int goodId, String uerName, OkHttpUtils.OnCompleteListener listener) {
+        OkHttpUtils<MessageBean> utils = new OkHttpUtils<>(context);
+        utils.setRequestUrl(I.REQUEST_ADD_COLLECT)
+                .addParam(I.Cart.GOODS_ID, "" + goodId)
+                .addParam(I.Cart.USER_NAME, uerName)
+                .targetClass(MessageBean.class)
+                .execute(listener);
+    }
+
+    /**
+     * 取消收藏
+     *
+     * @param context
+     * @param goodId
+     * @param uerName
+     * @param listener
+     */
+    public static void deleteCollect(Context context, int goodId, String uerName, OkHttpUtils.OnCompleteListener listener) {
+        OkHttpUtils<MessageBean> utils = new OkHttpUtils<>(context);
+        utils.setRequestUrl(I.REQUEST_DELETE_COLLECT)
+                .addParam(I.Cart.GOODS_ID, "" + goodId)
+                .addParam(I.Cart.USER_NAME, uerName)
+                .targetClass(MessageBean.class)
                 .execute(listener);
     }
 

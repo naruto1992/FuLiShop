@@ -1,21 +1,34 @@
 package cn.ucai.fulishop.activity;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
+import android.text.InputType;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.NumberPicker;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import cn.ucai.fulishop.R;
 import cn.ucai.fulishop.api.ApiDao;
 import cn.ucai.fulishop.api.I;
+import cn.ucai.fulishop.application.FuLiShopApplication;
 import cn.ucai.fulishop.bean.AlbumsBean;
 import cn.ucai.fulishop.bean.GoodsDetailsBean;
+import cn.ucai.fulishop.bean.MessageBean;
 import cn.ucai.fulishop.bean.PropertiesBean;
 import cn.ucai.fulishop.utils.ListUtil;
+import cn.ucai.fulishop.utils.MFGT;
 import cn.ucai.fulishop.utils.OkHttpUtils;
 import cn.ucai.fulishop.utils.ToastUtil;
 import cn.ucai.fulishop.view.FlowIndicator;
@@ -30,9 +43,10 @@ public class GoodsDetailActivity extends BaseActivity {
 
     Context mContext;
     int goodsId;
+    String userName;
 
-    @BindView(R.id.detailTitleBar)
-    TitleBar detailTitleBar; //标题
+    @BindView(R.id.ivCollectGoods)
+    ImageView ivCollectGoods;
     @BindView(R.id.savGoodsDetail)
     SlideAutoLoopView savGoodsDetail; //轮播图
     @BindView(R.id.fiGoodsDetail)
@@ -46,16 +60,18 @@ public class GoodsDetailActivity extends BaseActivity {
     @BindView(R.id.goodsBrief)
     TextView goodsBrief;  //简介
 
+    boolean isCollected = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_goods_detail);
         ButterKnife.bind(this);
         mContext = this;
-        detailTitleBar.init(this, "商品详情");
 
         goodsId = getIntent().getIntExtra(I.NewGoods.KEY_GOODS_ID, 0);
         loadGoodDetail(goodsId);
+        initCollect(goodsId);
     }
 
     private void loadGoodDetail(int goodsId) {
@@ -99,4 +115,199 @@ public class GoodsDetailActivity extends BaseActivity {
         goodsBrief.setText(result.getGoodsBrief());
     }
 
+    //初始化是否收藏
+    private void initCollect(int goodsId) {
+        if (FuLiShopApplication.getInstance().hasLogined()) {
+            userName = FuLiShopApplication.getInstance().getUserName();
+            ApiDao.isCollected(mContext, goodsId, userName, new OkHttpUtils.OnCompleteListener<MessageBean>() {
+                @Override
+                public void onStart() {
+                }
+
+                @Override
+                public void onSuccess(MessageBean result) {
+                    isCollected = result.isSuccess();
+                    setCollect();
+                }
+
+                @Override
+                public void onError(String error) {
+                    isCollected = false;
+                }
+            });
+        }
+    }
+
+    private void setCollect() {
+        ivCollectGoods.setImageResource(isCollected ? R.drawable.bg_collect_out : R.drawable.bg_collect_in);
+    }
+
+    @OnClick(R.id.actionBarBack)
+    public void back(View v) {
+        MFGT.finish(this);
+    }
+
+    @OnClick(R.id.ivAddToCart)
+    public void addToCart() {
+        if (!FuLiShopApplication.getInstance().hasLogined()) {
+            new AlertDialog.Builder(this)
+                    .setTitle("请先登录")
+                    .setNegativeButton("取消", null)
+                    .setPositiveButton("现在登录", new DialogInterface.OnClickListener() {
+
+                        public void onClick(DialogInterface dialog, int which) {
+                            Intent intent = new Intent(mContext, LoginActivity.class);
+                            GoodsDetailActivity.this.startActivityForResult(intent, 111);
+                        }
+                    })
+                    .create().show();
+        } else {
+            final NumberPicker numberPicker = new NumberPicker(this);
+            numberPicker.setOrientation(LinearLayout.HORIZONTAL);
+            numberPicker.setMinValue(1);
+            numberPicker.setMaxValue(99);
+            new AlertDialog.Builder(this)
+                    .setTitle("请选择商品数量").setView(numberPicker)
+                    .setNegativeButton("取消", null)
+                    .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+
+                        public void onClick(DialogInterface dialog, int which) {
+                            int count = numberPicker.getValue();
+                            addGoodsToCart(count);
+                        }
+                    })
+                    .create().show();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 111 && resultCode == RESULT_OK) {
+            addToCart();
+        }
+        if (requestCode == 222 && resultCode == RESULT_OK) {
+            initCollect(goodsId);
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    /**
+     * 添加至购物车
+     *
+     * @param count
+     */
+    private void addGoodsToCart(int count) {
+        userName = FuLiShopApplication.getInstance().getUserName();
+        ApiDao.addGoodsToCart(mContext, goodsId, userName, count, new OkHttpUtils.OnCompleteListener<MessageBean>() {
+            @Override
+            public void onStart() {
+                loadingDialog.show();
+            }
+
+            @Override
+            public void onSuccess(MessageBean result) {
+                loadingDialog.dismiss();
+                if (result.isSuccess()) {
+                    ToastUtil.show(mContext, "已成功添加至购物车");
+                } else {
+                    ToastUtil.show(mContext, "添加失败");
+                }
+            }
+
+            @Override
+            public void onError(String error) {
+                loadingDialog.dismiss();
+                ToastUtil.show(mContext, error);
+            }
+        });
+    }
+
+    @OnClick(R.id.ivCollectGoods)
+    public void collectGoods(View v) {
+        if (!FuLiShopApplication.getInstance().hasLogined()) {
+            new AlertDialog.Builder(this)
+                    .setTitle("请先登录")
+                    .setNegativeButton("取消", null)
+                    .setPositiveButton("现在登录", new DialogInterface.OnClickListener() {
+
+                        public void onClick(DialogInterface dialog, int which) {
+                            Intent intent = new Intent(mContext, LoginActivity.class);
+                            GoodsDetailActivity.this.startActivityForResult(intent, 222);
+                        }
+                    })
+                    .create().show();
+        } else {
+            if (isCollected) {
+                new AlertDialog.Builder(this)
+                        .setTitle("确定要取消收藏吗？")
+                        .setNegativeButton("取消", null)
+                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+
+                            public void onClick(DialogInterface dialog, int which) {
+                                cancelCollect();
+                                isCollected = false;
+                                setCollect();
+                            }
+                        })
+                        .create().show();
+            } else {
+                addCollect();
+                isCollected = true;
+                setCollect();
+            }
+        }
+    }
+
+    /**
+     * 添加收藏
+     */
+    private void addCollect() {
+        ApiDao.addCollect(mContext, goodsId, userName, new OkHttpUtils.OnCompleteListener<MessageBean>() {
+            @Override
+            public void onStart() {
+
+            }
+
+            @Override
+            public void onSuccess(MessageBean result) {
+                if (result.isSuccess()) {
+                    ToastUtil.show(mContext, "已收藏成功");
+                }
+            }
+
+            @Override
+            public void onError(String error) {
+                ToastUtil.show(mContext, error);
+            }
+        });
+    }
+
+    /**
+     * 取消收藏
+     */
+    private void cancelCollect() {
+        ApiDao.deleteCollect(mContext, goodsId, userName, new OkHttpUtils.OnCompleteListener<MessageBean>() {
+            @Override
+            public void onStart() {
+
+            }
+
+            @Override
+            public void onSuccess(MessageBean result) {
+                if (result.isSuccess()) {
+                    ToastUtil.show(mContext, "已取消收藏");
+                }
+            }
+
+            @Override
+            public void onError(String error) {
+                ToastUtil.show(mContext, error);
+            }
+        });
+    }
+
+    @OnClick(R.id.ivShareGoods)
+    public void shareGoods(View v) {
+        ToastUtil.show(mContext, "分享商品");
+    }
 }

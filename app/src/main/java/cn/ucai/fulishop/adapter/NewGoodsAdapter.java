@@ -104,8 +104,6 @@ public class NewGoodsAdapter extends RecyclerView.Adapter implements View.OnClic
         GoodsItemHolder itemViewHolder = (GoodsItemHolder) holder;
         itemViewHolder.name.setText(bean.getGoodsName());
         itemViewHolder.price.setText(bean.getCurrencyPrice());
-        long time = Long.parseLong(bean.getAddTime());
-        itemViewHolder.time.setText(getTime(bean.getAddTime()));
         //加载图片
         ImageLoader.build(I.DOWNLOAD_IMG_URL)
                 .url(bean.getGoodsThumb())
@@ -117,16 +115,16 @@ public class NewGoodsAdapter extends RecyclerView.Adapter implements View.OnClic
         itemViewHolder.itemView.setTag(position);
     }
 
-    private String getTime(String time) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd  HH:MM:SS", Locale.CHINA);
-        Date d;
-        if (time.length() == 13) {
-            d = new Date(Long.parseLong(time));
-        } else {
-            d = new Date(Long.parseLong(time) * 1000);
-        }
-        return sdf.format(d);
-    }
+//    private String getTime(String time) {
+//        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd  HH:MM:SS", Locale.CHINA);
+//        Date d;
+//        if (time.length() == 13) {
+//            d = new Date(Long.parseLong(time));
+//        } else {
+//            d = new Date(Long.parseLong(time) * 1000);
+//        }
+//        return sdf.format(d);
+//    }
 
     @Override
     public void onClick(View v) {
@@ -143,8 +141,6 @@ public class NewGoodsAdapter extends RecyclerView.Adapter implements View.OnClic
         TextView name;
         @BindView(R.id.newGoodsPrice)
         TextView price;
-        @BindView(R.id.newGoodsAddTime)
-        TextView time;
 
         public GoodsItemHolder(View itemView) {
             super(itemView);

@@ -91,6 +91,7 @@ public class LoginActivity extends BaseActivity {
                             // 发送广播通知
                             Intent intent = new Intent(I.HASLOGINED);
                             LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
+                            setResult(RESULT_OK, getIntent());
                             finish();
                         } else {
                             ToastUtil.show(mContext, result.getRetCode() + " 登录失败");

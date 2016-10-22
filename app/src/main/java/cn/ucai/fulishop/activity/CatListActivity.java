@@ -137,6 +137,8 @@ public class CatListActivity extends BaseActivity implements SwipeRefreshLayout.
                 catId = bean.getId();
                 pageId = 1;
                 loadGoodsListByCat(I.ACTION_DOWNLOAD, catId, pageId);
+                //
+                tvSortList.setText("排序");
             }
         });
         catListPw.setOnDismissListener(new PopupWindow.OnDismissListener() {
@@ -145,7 +147,7 @@ public class CatListActivity extends BaseActivity implements SwipeRefreshLayout.
                 tvCatExpand.setImageResource(R.drawable.arrow_down);
             }
         });
-        catListPw.setBackgroundDrawable(getDrawable(R.drawable.black_border_shape_yellow));
+        catListPw.setBackgroundDrawable(getResources().getDrawable(R.drawable.black_border_shape_yellow));
     }
 
     private void initCatPopupWindow() {
@@ -176,9 +178,10 @@ public class CatListActivity extends BaseActivity implements SwipeRefreshLayout.
                         adapter.sortByTime(-1);
                         break;
                 }
+                tvSortList.setText(sorts[position]);
             }
         });
-        sortListPw.setBackgroundDrawable(getDrawable(R.drawable.black_border_shape_yellow));
+        sortListPw.setBackgroundDrawable(getResources().getDrawable(R.drawable.black_border_shape_yellow));
     }
 
     private void loadGoodsListByCat(final int action, int catId, int pageId) {
@@ -259,6 +262,8 @@ public class CatListActivity extends BaseActivity implements SwipeRefreshLayout.
         loadGoodsListByCat(I.ACTION_PULL_DOWN, catId, pageId);
         catListSrl.setEnabled(true);
         catListSrl.setRefreshing(true);
+        //
+        tvSortList.setText("排序");
     }
 
     @Override

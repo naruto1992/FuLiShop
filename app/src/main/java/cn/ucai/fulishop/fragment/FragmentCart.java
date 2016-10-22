@@ -28,6 +28,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.ucai.fulishop.R;
 import cn.ucai.fulishop.activity.LoginActivity;
+import cn.ucai.fulishop.activity.MainActivity;
 import cn.ucai.fulishop.adapter.CartListAdapter;
 import cn.ucai.fulishop.api.ApiDao;
 import cn.ucai.fulishop.api.I;
@@ -117,6 +118,9 @@ public class FragmentCart extends Fragment implements SwipeRefreshLayout.OnRefre
                     case I.HASLOGINOUT:
                         // 已注销
                         btnCartLogin.setVisibility(View.VISIBLE);
+                        cartSrl.setVisibility(View.GONE);
+                        // 发送广播通知重置购物车数量
+                        sendBroadCast(0);
                         break;
                 }
             }
@@ -130,7 +134,7 @@ public class FragmentCart extends Fragment implements SwipeRefreshLayout.OnRefre
 
             @Override
             public void onStart() {
-                if (action != I.ACTION_PULL_DOWN) {
+                if (action != I.ACTION_PULL_DOWN && isVisible()) {
                     loadingDialog.show();
                 }
             }

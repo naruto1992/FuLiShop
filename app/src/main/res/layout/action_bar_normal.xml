@@ -4,31 +4,26 @@
     android:layout_height="50dp"
     android:background="@color/main_orange">
 
-    <LinearLayout
+
+    <ImageView
+        android:id="@+id/actionBarBack"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_alignParentStart="true"
-        android:layout_centerVertical="true"
-        android:gravity="center_vertical">
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:padding="10dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/selector_back" />
 
-        <ImageView
-            android:id="@+id/actionBarBack"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="10dp"
-            android:scaleType="centerInside"
-            android:src="@drawable/selector_back" />
-
-        <TextView
-            android:id="@+id/actionBarTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:maxWidth="200dp"
-            android:text="登录"
-            android:textColor="@color/white"
-            android:textSize="18sp" />
-    </LinearLayout>
+    <TextView
+        android:id="@+id/actionBarTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:maxWidth="200dp"
+        android:text="登录"
+        android:textColor="@color/white"
+        android:textSize="18sp" />
 
 </RelativeLayout>

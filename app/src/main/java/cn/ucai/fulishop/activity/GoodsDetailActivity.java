@@ -15,6 +15,7 @@ import android.widget.NumberPicker;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -27,6 +28,8 @@ import cn.ucai.fulishop.bean.AlbumsBean;
 import cn.ucai.fulishop.bean.GoodsDetailsBean;
 import cn.ucai.fulishop.bean.MessageBean;
 import cn.ucai.fulishop.bean.PropertiesBean;
+import cn.ucai.fulishop.db.FootPrintDao;
+import cn.ucai.fulishop.db.GoodsBean;
 import cn.ucai.fulishop.utils.ListUtil;
 import cn.ucai.fulishop.utils.MFGT;
 import cn.ucai.fulishop.utils.OkHttpUtils;
@@ -86,6 +89,8 @@ public class GoodsDetailActivity extends BaseActivity {
                 loadingDialog.dismiss();
                 if (result != null) {
                     initView(result);
+                    //保存至足迹
+                    saveToFootPrint(result);
                 }
             }
 
@@ -95,6 +100,17 @@ public class GoodsDetailActivity extends BaseActivity {
                 ToastUtil.show(mContext, error);
             }
         });
+    }
+
+    private synchronized void saveToFootPrint(GoodsDetailsBean result) {
+        GoodsBean bean = new GoodsBean();
+        bean.setGoodsId(result.getGoodsId());
+        bean.setGoodsName(bean.getGoodsName());
+        bean.setCurrencyPrice(bean.getCurrencyPrice());
+        bean.setGoodsThumb(bean.getGoodsThumb());
+        bean.setAddTime(new Date().getTime());
+        FootPrintDao dao = FootPrintDao.getInstance();
+        dao.saveFootPrint(bean);
     }
 
     private void initView(GoodsDetailsBean result) {

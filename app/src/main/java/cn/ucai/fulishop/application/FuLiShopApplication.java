@@ -5,6 +5,7 @@ import android.content.Context;
 
 import cn.ucai.fulishop.api.I;
 import cn.ucai.fulishop.bean.UserBean;
+import cn.ucai.fulishop.db.DBManager;
 import cn.ucai.fulishop.utils.PreferencesUtil;
 
 /**
@@ -24,10 +25,16 @@ public class FuLiShopApplication extends Application {
         return application;
     }
 
+    public static Context getContext() {
+        return context;
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
-        context = this;
+        context = getApplicationContext();
+        //greendao全局配置
+        DBManager.getInstance();
     }
 
     public boolean hasLogined() {

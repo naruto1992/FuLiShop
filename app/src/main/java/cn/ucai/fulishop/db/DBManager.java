@@ -1,11 +1,8 @@
 package cn.ucai.fulishop.db;
 
-import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 
-import cn.ucai.fulishop.bean.UserBean;
+import cn.ucai.fulishop.application.FuLiShopApplication;
 
 /**
  * Created by Administrator on 2016/10/24.
@@ -13,26 +10,49 @@ import cn.ucai.fulishop.bean.UserBean;
 
 public class DBManager {
 
-    Context mContext;
-    static DBManager manager;
-    private SQLiteDatabase db;
+    private static DBManager manager;
+    DaoMaster mDaoMaster;
+    DaoSession mDaoSession;
+    private static GoodsBeanDao dao;
 
-    public DBManager(Context context) {
-        this.mContext = context;
-        this.db = DBHelper.getDataBase(context);
+    public DBManager() {
+        if (manager == null) {
+            DaoMaster.DevOpenHelper devOpenHelper = new
+                    DaoMaster.DevOpenHelper(FuLiShopApplication.getContext(), "fulishop.db", null);
+            mDaoMaster = new DaoMaster(devOpenHelper.getWritableDatabase());
+            mDaoSession = mDaoMaster.newSession();
+        }
     }
 
-    public static DBManager getInstance(Context context) {
+    public static DBManager getInstance() {
         if (manager == null) {
-            manager = new DBManager(context);
+            synchronized (DBManager.class) {
+                if (manager == null) {
+                    manager = new DBManager();
+                }
+            }
         }
         return manager;
     }
 
-    public synchronized void closeDB() {
-        if (db != null) {
-            db.close();
+    public DaoMaster getMaster() {
+        return mDaoMaster;
+    }
+
+    public DaoSession getSession() {
+        return mDaoSession;
+    }
+
+    public DaoSession getNewSession() {
+        mDaoSession = mDaoMaster.newSession();
+        return mDaoSession;
+    }
+
+    public static GoodsBeanDao getFootPrintDao() {
+        if (dao == null) {
+            dao = DBManager.getInstance().getNewSession().getGoodsBeanDao();
         }
+        return dao;
     }
 
 }

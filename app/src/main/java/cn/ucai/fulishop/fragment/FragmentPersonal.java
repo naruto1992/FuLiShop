@@ -16,6 +16,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -23,6 +25,8 @@ import cn.ucai.fulishop.R;
 import cn.ucai.fulishop.activity.LoginActivity;
 import cn.ucai.fulishop.api.I;
 import cn.ucai.fulishop.application.FuLiShopApplication;
+import cn.ucai.fulishop.db.FootPrintDao;
+import cn.ucai.fulishop.db.GoodsBean;
 import cn.ucai.fulishop.utils.MFGT;
 import cn.ucai.fulishop.utils.ToastUtil;
 import cn.ucai.fulishop.view.BottomLineTextView;
@@ -110,7 +114,13 @@ public class FragmentPersonal extends Fragment implements SwipeRefreshLayout.OnR
 
     private void init() {
         tvUserNick.setText(FuLiShopApplication.getInstance().getUserNick());
-        personSrl.setRefreshing(false);
+        //获取足迹
+        FootPrintDao dao = FootPrintDao.getInstance();
+        List<GoodsBean> footPrints = dao.findAllFootPrint();
+        ToastUtil.show(mContext, footPrints.size() + "条足迹");
+        if (personSrl.isRefreshing()) {
+            personSrl.setRefreshing(false);
+        }
     }
 
     //设置
@@ -156,8 +166,6 @@ public class FragmentPersonal extends Fragment implements SwipeRefreshLayout.OnR
     @Override
     public void onRefresh() {
         init();
-        personSrl.setRefreshing(true);
-        personSrl.setEnabled(true);
     }
 
     @OnClick({R.id.btnPersonalLogin, R.id.userInfo, R.id.personMessage, R.id.personCollect, R.id.footPrint})

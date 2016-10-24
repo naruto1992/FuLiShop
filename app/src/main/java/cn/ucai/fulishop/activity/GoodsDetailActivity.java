@@ -151,7 +151,7 @@ public class GoodsDetailActivity extends BaseActivity {
     public void addToCart() {
         if (!FuLiShopApplication.getInstance().hasLogined()) {
             new AlertDialog.Builder(this)
-                    .setTitle("请先登录")
+                    .setMessage("请先登录")
                     .setNegativeButton("取消", null)
                     .setPositiveButton("现在登录", new DialogInterface.OnClickListener() {
 
@@ -167,7 +167,7 @@ public class GoodsDetailActivity extends BaseActivity {
             numberPicker.setMinValue(1);
             numberPicker.setMaxValue(99);
             new AlertDialog.Builder(this)
-                    .setTitle("请选择商品数量").setView(numberPicker)
+                    .setMessage("请选择商品数量").setView(numberPicker)
                     .setNegativeButton("取消", null)
                     .setPositiveButton("确定", new DialogInterface.OnClickListener() {
 
@@ -226,7 +226,7 @@ public class GoodsDetailActivity extends BaseActivity {
     public void collectGoods(View v) {
         if (!FuLiShopApplication.getInstance().hasLogined()) {
             new AlertDialog.Builder(this)
-                    .setTitle("请先登录")
+                    .setMessage("请先登录")
                     .setNegativeButton("取消", null)
                     .setPositiveButton("现在登录", new DialogInterface.OnClickListener() {
 
@@ -239,7 +239,7 @@ public class GoodsDetailActivity extends BaseActivity {
         } else {
             if (isCollected) {
                 new AlertDialog.Builder(this)
-                        .setTitle("确定要取消收藏吗？")
+                        .setMessage("确定要取消收藏吗？")
                         .setNegativeButton("取消", null)
                         .setPositiveButton("确定", new DialogInterface.OnClickListener() {
 

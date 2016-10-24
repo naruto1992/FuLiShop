@@ -34,16 +34,15 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="210dp"
+                    android:layout_height="190dp"
                     android:background="@color/main_orange"
-                    android:orientation="vertical"
-                    android:paddingLeft="15dp"
-                    android:paddingRight="15dp">
+                    android:orientation="vertical">
 
                     <LinearLayout
                         android:layout_width="wrap_content"
-                        android:layout_height="50dp"
+                        android:layout_height="40dp"
                         android:layout_gravity="right|center_vertical"
+                        android:layout_marginRight="15dp"
                         android:gravity="center_vertical">
 
                         <TextView
@@ -55,28 +54,35 @@
                             android:textSize="20sp" />
 
                         <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:id="@+id/personMessage"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
                             android:layout_marginLeft="20dp"
-                            android:src="@drawable/icon_account" />
+                            android:src="@drawable/icon_message" />
 
                     </LinearLayout>
 
                     <LinearLayout
+                        android:id="@+id/userInfo"
                         android:layout_width="match_parent"
                         android:layout_height="70dp"
-                        android:gravity="center_vertical">
+                        android:background="@drawable/list_item_bg_orange"
+                        android:gravity="center_vertical"
+                        android:paddingLeft="15dp">
 
                         <ImageView
+                            android:id="@+id/ivUserAvatar"
                             android:layout_width="70dp"
                             android:layout_height="70dp"
+                            android:scaleType="fitXY"
                             android:src="@drawable/default_face" />
 
                         <TextView
+                            android:id="@+id/tvUserNick"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="20dp"
-                            android:text="yulong"
+                            android:text=""
                             android:textColor="@color/white"
                             android:textSize="18sp" />
                     </LinearLayout>
@@ -84,11 +90,12 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="80dp"
+                    android:layout_height="70dp"
                     android:layout_gravity="bottom"
                     android:background="@color/half_transparent">
 
                     <LinearLayout
+                        android:id="@+id/personCollect"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
@@ -96,9 +103,10 @@
                         android:orientation="vertical">
 
                         <TextView
+                            android:id="@+id/personCollectNum"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="2"
+                            android:text="0"
                             android:textColor="@color/white"
                             android:textSize="18sp" />
 
@@ -120,6 +128,7 @@
                         android:background="@color/white" />
 
                     <LinearLayout
+                        android:id="@+id/footPrint"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
@@ -129,11 +138,12 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="18"
+                            android:text="0"
                             android:textColor="@color/white"
                             android:textSize="18sp" />
 
                         <TextView
+                            android:id="@+id/footprintNum"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="10dp"

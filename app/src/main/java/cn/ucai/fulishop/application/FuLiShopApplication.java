@@ -44,6 +44,10 @@ public class FuLiShopApplication extends Application {
     }
 
     public String getUserName() {
-        return PreferencesUtil.getString(context, I.User.USER_NAME);
+        return PreferencesUtil.getUserName(context);
+    }
+
+    public String getUserNick() {
+        return PreferencesUtil.getUserNick(context);
     }
 }

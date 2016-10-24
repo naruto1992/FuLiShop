@@ -85,7 +85,6 @@ public class LoginActivity extends BaseActivity {
                             ToastUtil.show(mContext, "登录成功");
                             Gson gson = new Gson();
                             UserBean userBean = gson.fromJson(result.getRetData().toString(), UserBean.class);
-                            userBean.setPass(pass);
                             FuLiShopApplication.getInstance().saveUser(userBean);
                             FuLiShopApplication.getInstance().setLogined(true);
                             // 发送广播通知

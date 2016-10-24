@@ -19,10 +19,9 @@ public class UserBean {
     private String muserNick;
     private int mavatarId;
     private String mavatarPath;
-    private Object mavatarSuffix;
+    private String mavatarSuffix;
     private int mavatarType;
     private String mavatarLastUpdateTime;
-    private String pass;
 
     public String getMuserName() {
         return muserName;
@@ -56,11 +55,11 @@ public class UserBean {
         this.mavatarPath = mavatarPath;
     }
 
-    public Object getMavatarSuffix() {
+    public String getMavatarSuffix() {
         return mavatarSuffix;
     }
 
-    public void setMavatarSuffix(Object mavatarSuffix) {
+    public void setMavatarSuffix(String mavatarSuffix) {
         this.mavatarSuffix = mavatarSuffix;
     }
 
@@ -80,14 +79,6 @@ public class UserBean {
         this.mavatarLastUpdateTime = mavatarLastUpdateTime;
     }
 
-    public String getPass() {
-        return pass;
-    }
-
-    public void setPass(String pass) {
-        this.pass = pass;
-    }
-
     @Override
     public String toString() {
         return "UserBean{" +
@@ -95,10 +86,9 @@ public class UserBean {
                 ", muserNick='" + muserNick + '\'' +
                 ", mavatarId=" + mavatarId +
                 ", mavatarPath='" + mavatarPath + '\'' +
-                ", mavatarSuffix=" + mavatarSuffix +
+                ", mavatarSuffix='" + mavatarSuffix + '\'' +
                 ", mavatarType=" + mavatarType +
                 ", mavatarLastUpdateTime='" + mavatarLastUpdateTime + '\'' +
-                ", pass='" + pass + '\'' +
                 '}';
     }
 }

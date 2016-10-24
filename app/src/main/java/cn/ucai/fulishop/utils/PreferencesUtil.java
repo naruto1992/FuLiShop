@@ -62,10 +62,16 @@ public class PreferencesUtil {
         return getString(context, I.User.USER_NAME);
     }
 
+    public static void saveUserNick(Context context, String nick) {
+        putString(context, I.User.NICK, nick);
+    }
+
+    public static String getUserNick(Context context) {
+        return getString(context, I.User.NICK);
+    }
+
     public static void saveUser(Context context, UserBean user) {
-        putString(context, I.User.USER_NAME, user.getMuserName());
-        putInt(context, I.Avatar.AVATAR_ID, user.getMavatarId());
-        putString(context, I.User.NICK, user.getMuserNick());
-        putString(context, I.User.PASSWORD, user.getPass());
+        saveUserName(context, user.getMuserName());
+        saveUserNick(context, user.getMuserNick());
     }
 }

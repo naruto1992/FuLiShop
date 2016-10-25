@@ -49,7 +49,6 @@ public class RegisterActivity extends BaseActivity {
         setContentView(R.layout.activity_register);
         ButterKnife.bind(this);
         mContext = this;
-        registerTitleBar.init(this, "账户注册");
     }
 
     @OnClick(R.id.btnRegister)

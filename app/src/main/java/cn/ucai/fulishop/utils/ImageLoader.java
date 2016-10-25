@@ -218,6 +218,7 @@ public class ImageLoader {
         }
         //用图片的下载地址（不包含每个图片的文件名)设置用于取消请求的tag
         mTag = mBean.url;
+        Log.e("url", mBean.url);
         Request request = new Request.Builder().url(mBean.url).tag(mTag).build();
         Call call = mOkHttpClient.newCall(request);
         call.enqueue(new Callback() {

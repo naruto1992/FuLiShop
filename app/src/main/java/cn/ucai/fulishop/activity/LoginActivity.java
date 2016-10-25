@@ -51,7 +51,6 @@ public class LoginActivity extends BaseActivity {
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
         mContext = this;
-        loginTitleBar.init(this, "账户登录");
     }
 
     @OnClick(R.id.btn_login)

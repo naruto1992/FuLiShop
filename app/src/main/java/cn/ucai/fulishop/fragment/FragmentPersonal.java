@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.List;
@@ -23,14 +24,17 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.ucai.fulishop.R;
 import cn.ucai.fulishop.activity.LoginActivity;
+import cn.ucai.fulishop.activity.UserProfileActivity;
+import cn.ucai.fulishop.api.ApiDao;
 import cn.ucai.fulishop.api.I;
 import cn.ucai.fulishop.application.FuLiShopApplication;
+import cn.ucai.fulishop.bean.MessageBean;
 import cn.ucai.fulishop.db.FootPrintDao;
 import cn.ucai.fulishop.db.GoodsBean;
+import cn.ucai.fulishop.utils.ImageLoader;
 import cn.ucai.fulishop.utils.MFGT;
+import cn.ucai.fulishop.utils.OkHttpUtils;
 import cn.ucai.fulishop.utils.ToastUtil;
-import cn.ucai.fulishop.view.BottomLineTextView;
-import cn.ucai.fulishop.view.SimpleListDialog;
 
 /**
  * Created by Shinelon on 2016/10/13.
@@ -39,9 +43,6 @@ import cn.ucai.fulishop.view.SimpleListDialog;
 public class FragmentPersonal extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
     Context mContext;
-
-    @BindView(R.id.btnPersonalLogin)
-    BottomLineTextView btnPersonalLogin;
 
     @BindView(R.id.personSrl)
     SwipeRefreshLayout personSrl;
@@ -53,9 +54,24 @@ public class FragmentPersonal extends Fragment implements SwipeRefreshLayout.OnR
     TextView personCollectNum; //收藏数量
     @BindView(R.id.footprintNum)
     TextView footprintNum; //足迹数量
+    @BindView(R.id.personCollect)
+    LinearLayout personCollect;
+    @BindView(R.id.footPrint)
+    LinearLayout footPrint;
+    @BindView(R.id.personSetting)
+    TextView personSetting; //设置
+    @BindView(R.id.userInfo)
+    LinearLayout userInfo; //用户信息栏
+
+    boolean logined = false;
+    FootPrintDao footPrintDao;
+    List<GoodsBean> footPrints;
+    String userName;
+    ViewGroup parent;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        parent = container;
         View layout = inflater.inflate(R.layout.fragment_personal, container, false);
         ButterKnife.bind(this, layout);
         return layout;
@@ -69,15 +85,13 @@ public class FragmentPersonal extends Fragment implements SwipeRefreshLayout.OnR
     }
 
     private void initView() {
+        personSrl.setOnRefreshListener(this);
         if (FuLiShopApplication.getInstance().hasLogined()) {
-            btnPersonalLogin.setVisibility(View.GONE);
-            personSrl.setVisibility(View.VISIBLE);
-            personSrl.setOnRefreshListener(this);
-            init();
+            logined = true;
         } else {
-            btnPersonalLogin.setVisibility(View.VISIBLE);
-            personSrl.setVisibility(View.GONE);
+            logined = false;
         }
+        init(logined);
         initBroadcast();
     }
 
@@ -93,89 +107,106 @@ public class FragmentPersonal extends Fragment implements SwipeRefreshLayout.OnR
                 switch (intent.getAction()) {
                     case I.HASLOGINED:
                         // 已登录
-                        btnPersonalLogin.setVisibility(View.GONE);
-                        personSrl.setVisibility(View.VISIBLE);
-                        init();
+                        logined = true;
                         break;
                     case I.HASLOGINOUT:
                         // 已注销
-                        btnPersonalLogin.setVisibility(View.VISIBLE);
-                        personSrl.setVisibility(View.GONE);
+                        logined = false;
                         // 发送广播通知
                         Intent cart = new Intent(I.Cart.COUNT);
                         intent.putExtra(I.Cart.COUNT, 0);
                         LocalBroadcastManager.getInstance(mContext).sendBroadcast(cart);
                         break;
                 }
+                init(logined);
             }
         };
         broadcastManager.registerReceiver(mReceiver, intentFilter);
     }
 
-    private void init() {
-        tvUserNick.setText(FuLiShopApplication.getInstance().getUserNick());
-        //获取足迹
-        FootPrintDao dao = FootPrintDao.getInstance();
-        List<GoodsBean> footPrints = dao.findAllFootPrint();
-        ToastUtil.show(mContext, footPrints.size() + "条足迹");
-        if (personSrl.isRefreshing()) {
-            personSrl.setRefreshing(false);
+    private void init(boolean logined) {
+        if (logined) {
+            userName = FuLiShopApplication.getInstance().getUserName();
+            tvUserNick.setText(FuLiShopApplication.getInstance().getUserNick());
+            loadCollectNum();
+            loadUserAavatar();
+            personCollect.setEnabled(true);
+            personSetting.setEnabled(true);
+            userInfo.setEnabled(true);
+        } else {
+            tvUserNick.setText("登录/注册");
+            tvUserNick.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    MFGT.startActivity(getActivity(), LoginActivity.class);
+                }
+            });
+            personCollectNum.setText("0");
+            personCollect.setEnabled(false);
+            personSetting.setEnabled(false);
+            userInfo.setEnabled(false);
         }
+        //获取足迹
+        footPrintDao = FootPrintDao.getInstance();
+        footPrints = footPrintDao.findAllFootPrint();
+        footprintNum.setText("" + footPrints.size());
+        personSrl.setRefreshing(false);
+    }
+
+    //下载用户头像
+    private void loadUserAavatar() {
+        ImageLoader.build(I.DOWNLOAD_AVATAR_URL)
+                .addParam(I.NAME_OR_HXID, userName)
+                .addParam(I.AVATAR_TYPE, I.AVATAR_TYPE_USER_PATH)
+                .addParam("m_avatar_suffix", I.AVATAR_SUFFIX_JPG)
+                .addParam("width", "200")
+                .addParam("height", "200")
+                .defaultPicture(R.drawable.default_face)
+                .imageView(ivUserAvatar)
+                .listener(parent)
+                .showImage(mContext);
+    }
+
+    //加载收藏数量
+    private void loadCollectNum() {
+        ApiDao.loadCollectCount(mContext, userName, new OkHttpUtils.OnCompleteListener<MessageBean>() {
+            @Override
+            public void onStart() {
+
+            }
+
+            @Override
+            public void onSuccess(MessageBean result) {
+                if (result.isSuccess()) {
+                    personCollectNum.setText(result.getMsg());
+                }
+            }
+
+            @Override
+            public void onError(String error) {
+                personCollectNum.setText("0");
+            }
+        });
     }
 
     //设置
     @OnClick(R.id.personSetting)
     public void setting(View v) {
-        String[] items = new String[]{"注销登录", "取消注册"};
-        SimpleListDialog.Builder builder = new SimpleListDialog.Builder(mContext);
-        builder.setItems(items, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                switch (which) {
-                    case 0:
-                        logout();
-                        break;
-                    case 1:
-                        deleteRegister();
-                        break;
-                }
-            }
-        });
-        builder.create().show();
-    }
-
-    private void logout() {
-        new AlertDialog.Builder(mContext).setMessage("您确定要注销登录吗？")
-                .setPositiveButton("注销", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        FuLiShopApplication.getInstance().setLogined(false);
-                        // 发送广播通知
-                        Intent intent = new Intent(I.HASLOGINOUT);
-                        LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
-                    }
-                })
-                .setNegativeButton("取消", null)
-                .create().show();
-    }
-
-    private void deleteRegister() {
-        ToastUtil.show(mContext, "取消注册");
+        Intent profile = new Intent(mContext, UserProfileActivity.class);
+        startActivity(profile);
     }
 
     @Override
     public void onRefresh() {
-        init();
+        init(logined);
     }
 
-    @OnClick({R.id.btnPersonalLogin, R.id.userInfo, R.id.personMessage, R.id.personCollect, R.id.footPrint})
+    @OnClick({R.id.userInfo, R.id.personMessage, R.id.personCollect, R.id.footPrint})
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.btnPersonalLogin:
-                MFGT.startActivity(getActivity(), LoginActivity.class);
-                break;
             case R.id.userInfo:
-                ToastUtil.show(mContext, "个人资料");
+                Intent profile = new Intent(mContext, UserProfileActivity.class);
+                startActivity(profile);
                 break;
             case R.id.personMessage:
                 ToastUtil.show(mContext, "我的消息");

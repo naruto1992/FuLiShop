@@ -62,7 +62,7 @@ public class GoodsListActivity extends BaseActivity implements SwipeRefreshLayou
     }
 
     private void initView() {
-        goodsListTitleBar.init(this, title);
+        goodsListTitleBar.setTitle(title);
         adapter = new NewGoodsAdapter(mContext, goodsList);
         adapter.setClickListener(this);
         mLayoutManager = new GridLayoutManager(mContext, 2);

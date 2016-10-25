@@ -23,7 +23,8 @@
         <activity android:name=".activity.LoginActivity" />
         <activity android:name=".activity.RegisterActivity" />
         <activity android:name=".activity.GoodsDetailActivity" />
-        <activity android:name=".activity.CatListActivity"></activity>
+        <activity android:name=".activity.CatListActivity" />
+        <activity android:name=".activity.UserProfileActivity"></activity>
     </application>
 
 </manifest>

@@ -2,6 +2,7 @@ package cn.ucai.fulishop.view;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,6 +28,8 @@ public class TitleBar extends RelativeLayout {
     @BindView(R.id.actionBarTitle)
     TextView actionBarTitle;
 
+    String mTitle;
+
     public TitleBar(Context context) {
         super(context);
         initView(context);
@@ -34,23 +37,27 @@ public class TitleBar extends RelativeLayout {
 
     public TitleBar(Context context, AttributeSet attrs) {
         super(context, attrs);
+        TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.TitleBar);
+        mTitle = array.getString(R.styleable.TitleBar_title);
         initView(context);
     }
 
-    private void initView(Context context) {
+    private void initView(final Context context) {
         View view = LayoutInflater.from(context).inflate(
                 R.layout.action_bar_normal, this, true);
         ButterKnife.bind(this, view);
-    }
-
-    public void init(final Activity activity, String title) {
-        actionBarTitle.setText(title);
+        actionBarTitle.setText(mTitle);
         actionBarBack.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                MFGT.finish(activity);
+                MFGT.finish((Activity) context);
             }
         });
+    }
+
+    public void setTitle(String title) {
+        mTitle = title;
+        actionBarTitle.setText(mTitle);
     }
 
 

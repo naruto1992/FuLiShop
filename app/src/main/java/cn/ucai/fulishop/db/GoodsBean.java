@@ -5,12 +5,16 @@ import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Property;
 import org.greenrobot.greendao.annotation.Generated;
 
+import java.io.Serializable;
+
 /**
  * Created by Shinelon on 2016/10/24.
  */
 
 @Entity
-public class GoodsBean {
+public class GoodsBean implements Serializable {
+
+    private static final long serialVersionUID = -6812146008368959939L;
     @Id
     private Long id;
     @Property(nameInDb = "GOODS_ID")

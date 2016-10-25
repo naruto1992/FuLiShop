@@ -1,16 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="Emojicon">
-        <attr name="emojiconSize" format="dimension"/>
-        <attr name="emojiconTextStart" format="integer"/>
-        <attr name="emojiconTextLength" format="integer"/>
+        <attr name="emojiconSize" format="dimension" />
+        <attr name="emojiconTextStart" format="integer" />
+        <attr name="emojiconTextLength" format="integer" />
     </declare-styleable>
     <declare-styleable name="FlowIndicator">
-        <attr name="count" format="integer"/>
-        <attr name="r" format="dimension"/>
-        <attr name="space" format="dimension"/>
-        <attr name="normal_color" format="color|reference"/>
-        <attr name="focus_color" format="color|reference"/>
-        <attr name="focus" format="integer"/>
+        <attr name="count" format="integer" />
+        <attr name="r" format="dimension" />
+        <attr name="space" format="dimension" />
+        <attr name="normal_color" format="color|reference" />
+        <attr name="focus_color" format="color|reference" />
+        <attr name="focus" format="integer" />
+    </declare-styleable>
+
+    <declare-styleable name="TitleBar">
+        <attr name="title" format="string" />
     </declare-styleable>
 </resources>

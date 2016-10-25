@@ -5,6 +5,8 @@ import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
 import android.widget.EditText;
 
+import java.io.File;
+
 import cn.ucai.fulishop.bean.BoutiqueBean;
 import cn.ucai.fulishop.bean.CartBean;
 import cn.ucai.fulishop.bean.CategoryChildBean;
@@ -244,6 +246,25 @@ public class ApiDao {
                 .addParam(I.Cart.GOODS_ID, "" + goodId)
                 .addParam(I.Cart.USER_NAME, uerName)
                 .targetClass(MessageBean.class)
+                .execute(listener);
+    }
+
+    public static void loadCollectCount(Context context, String uerName, OkHttpUtils.OnCompleteListener listener) {
+        OkHttpUtils<MessageBean> utils = new OkHttpUtils<>(context);
+        utils.setRequestUrl(I.REQUEST_FIND_COLLECT_COUNT)
+                .addParam(I.Cart.USER_NAME, uerName)
+                .targetClass(MessageBean.class)
+                .execute(listener);
+    }
+
+    public static void updateAvatar(Context context, String username, File file, OkHttpUtils.OnCompleteListener<String> listener){
+        OkHttpUtils<String> utils = new OkHttpUtils<>(context);
+        utils.setRequestUrl(I.REQUEST_UPDATE_AVATAR)
+                .addParam(I.NAME_OR_HXID,username)
+                .addParam(I.AVATAR_TYPE,I.AVATAR_TYPE_USER_PATH)
+                .addFile2(file)
+                .targetClass(String.class)
+                .post()
                 .execute(listener);
     }
 

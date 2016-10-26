@@ -28,6 +28,7 @@ import cn.ucai.fulishop.api.ApiDao;
 import cn.ucai.fulishop.api.I;
 import cn.ucai.fulishop.bean.CategoryChildBean;
 import cn.ucai.fulishop.bean.NewGoodsBean;
+import cn.ucai.fulishop.db.FootPrint;
 import cn.ucai.fulishop.listener.ListListener;
 import cn.ucai.fulishop.utils.DialogUtil;
 import cn.ucai.fulishop.utils.ListUtil;
@@ -269,8 +270,6 @@ public class CatListActivity extends BaseActivity implements SwipeRefreshLayout.
     @Override
     public void onItemClick(int position, int itemType) {
         NewGoodsBean bean = adapter.getData().get(position);
-        Intent intent = new Intent(this, GoodsDetailActivity.class);
-        intent.putExtra("goods", bean);
-        MFGT.startActivityByIntent(this, intent);
+        MFGT.goToGoodsDetailActivity(this, bean.getGoodsId());
     }
 }

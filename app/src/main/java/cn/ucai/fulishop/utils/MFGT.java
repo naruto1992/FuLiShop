@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import cn.ucai.fulishop.R;
+import cn.ucai.fulishop.activity.GoodsDetailActivity;
 import cn.ucai.fulishop.activity.GoodsListActivity;
 import cn.ucai.fulishop.activity.MainActivity;
 
@@ -29,6 +30,12 @@ public class MFGT { //move from go to
     public static void startActivityByIntent(Activity context, Intent intent) {
         context.startActivity(intent);
         context.overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+    }
+
+    public static void goToGoodsDetailActivity(Activity context, int goodsId) {
+        Intent intent = new Intent(context, GoodsDetailActivity.class);
+        intent.putExtra("goodsId", goodsId);
+        startActivityByIntent(context, intent);
     }
 
 }

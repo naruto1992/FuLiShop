@@ -110,21 +110,9 @@ public class NewGoodsAdapter extends RecyclerView.Adapter implements View.OnClic
                 .defaultPicture(R.drawable.nopic)
                 .imageView(itemViewHolder.pic)
                 .listener(parent)
-//                .setDragging(mScrollState != RecyclerView.SCROLL_STATE_DRAGGING)
                 .showImage(context);
         itemViewHolder.itemView.setTag(position);
     }
-
-//    private String getTime(String time) {
-//        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd  HH:MM:SS", Locale.CHINA);
-//        Date d;
-//        if (time.length() == 13) {
-//            d = new Date(Long.parseLong(time));
-//        } else {
-//            d = new Date(Long.parseLong(time) * 1000);
-//        }
-//        return sdf.format(d);
-//    }
 
     @Override
     public void onClick(View v) {

@@ -78,12 +78,8 @@ public class FootPrintsPagerAdapter extends PagerAdapter implements View.OnClick
     @Override
     public void onClick(View v) {
         int position = (int) v.getTag();
-        FootPrint footPrint = footPrintList.get(position);
-        NewGoodsBean bean = new NewGoodsBean();
-        bean.setGoodsId(footPrint.getGoodsId());
-        Intent intent = new Intent(mContext, GoodsDetailActivity.class);
-        intent.putExtra("goods", bean);
-        MFGT.startActivityByIntent((Activity) mContext, intent);
+        FootPrint bean = footPrintList.get(position);
+        MFGT.goToGoodsDetailActivity((Activity) mContext, bean.getGoodsId());
     }
 
     static class ViewHolder {

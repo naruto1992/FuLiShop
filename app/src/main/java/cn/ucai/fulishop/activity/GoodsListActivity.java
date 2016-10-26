@@ -18,6 +18,7 @@ import cn.ucai.fulishop.adapter.NewGoodsAdapter;
 import cn.ucai.fulishop.api.ApiDao;
 import cn.ucai.fulishop.api.I;
 import cn.ucai.fulishop.bean.NewGoodsBean;
+import cn.ucai.fulishop.db.FootPrint;
 import cn.ucai.fulishop.listener.ListListener;
 import cn.ucai.fulishop.utils.DialogUtil;
 import cn.ucai.fulishop.utils.ListUtil;
@@ -157,9 +158,6 @@ public class GoodsListActivity extends BaseActivity implements SwipeRefreshLayou
     @Override
     public void onItemClick(int position, int itemType) {
         NewGoodsBean bean = adapter.getData().get(position);
-        int goodsId = bean.getGoodsId();
-        Intent intent = new Intent(this, GoodsDetailActivity.class);
-        intent.putExtra(I.NewGoods.KEY_GOODS_ID, goodsId);
-        MFGT.startActivityByIntent(this, intent);
+        MFGT.goToGoodsDetailActivity(this, bean.getGoodsId());
     }
 }

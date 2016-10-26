@@ -22,6 +22,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.ucai.fulishop.R;
+import cn.ucai.fulishop.activity.CollectsActivity;
 import cn.ucai.fulishop.activity.FootPrintsActivity;
 import cn.ucai.fulishop.activity.LoginActivity;
 import cn.ucai.fulishop.activity.UserProfileActivity;
@@ -214,11 +215,12 @@ public class FragmentPersonal extends Fragment implements SwipeRefreshLayout.OnR
                 ToastUtil.show(mContext, "我的消息");
                 break;
             case R.id.personCollect:
-                ToastUtil.show(mContext, "我的收藏");
+                Intent colects = new Intent(getActivity(), CollectsActivity.class);
+                startActivity(colects);
                 break;
             case R.id.footPrint:
-                Intent intent = new Intent(getActivity(), FootPrintsActivity.class);
-                startActivity(intent);
+                Intent footPrints = new Intent(getActivity(), FootPrintsActivity.class);
+                startActivity(footPrints);
                 break;
         }
     }

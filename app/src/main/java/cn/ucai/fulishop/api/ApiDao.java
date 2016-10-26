@@ -266,6 +266,24 @@ public class ApiDao {
     }
 
     /**
+     * 加载收藏列表
+     *
+     * @param context
+     * @param uerName
+     * @param pageId
+     * @param listener
+     */
+    public static void loadCollectList(Context context, String uerName, int pageId, OkHttpUtils.OnCompleteListener listener) {
+        OkHttpUtils<String> utils = new OkHttpUtils<>(context);
+        utils.setRequestUrl(I.REQUEST_FIND_COLLECTS)
+                .addParam(I.Cart.USER_NAME, uerName)
+                .addParam(I.PAGE_ID, "" + pageId)
+                .addParam(I.PAGE_SIZE, "" + I.PAGE_SIZE_DEFAULT)
+                .targetClass(String.class)
+                .execute(listener);
+    }
+
+    /**
      * 更新头像
      *
      * @param context

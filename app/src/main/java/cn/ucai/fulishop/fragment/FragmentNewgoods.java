@@ -29,6 +29,7 @@ import cn.ucai.fulishop.adapter.NewGoodsAdapter;
 import cn.ucai.fulishop.api.ApiDao;
 import cn.ucai.fulishop.api.I;
 import cn.ucai.fulishop.bean.NewGoodsBean;
+import cn.ucai.fulishop.db.FootPrint;
 import cn.ucai.fulishop.listener.ListListener.OnItemClickListener;
 import cn.ucai.fulishop.utils.DialogUtil;
 import cn.ucai.fulishop.utils.ImageLoader;
@@ -157,7 +158,6 @@ public class FragmentNewgoods extends Fragment implements OnRefreshListener, OnI
                 ToastUtil.showOnUI(getActivity(), error);
             }
         });
-
     }
 
     @Override
@@ -172,9 +172,7 @@ public class FragmentNewgoods extends Fragment implements OnRefreshListener, OnI
     @Override
     public void onItemClick(int position, int itemType) {
         NewGoodsBean bean = adapter.getData().get(position);
-        Intent intent = new Intent(getActivity(), GoodsDetailActivity.class);
-        intent.putExtra("goods", bean);
-        MFGT.startActivityByIntent(getActivity(), intent);
+        MFGT.goToGoodsDetailActivity(getActivity(), bean.getGoodsId());
     }
 
 }

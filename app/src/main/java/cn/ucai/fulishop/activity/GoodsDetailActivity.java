@@ -42,7 +42,7 @@ import cn.ucai.fulishop.view.SlideAutoLoopView;
 public class GoodsDetailActivity extends BaseActivity {
 
     Context mContext;
-    NewGoodsBean goodsBean;
+    FootPrint goods;
     int goodsId;
     String userName;
 
@@ -70,10 +70,10 @@ public class GoodsDetailActivity extends BaseActivity {
         ButterKnife.bind(this);
         mContext = this;
 
-        goodsBean = (NewGoodsBean) getIntent().getSerializableExtra("goods");
+        goods = (FootPrint) getIntent().getSerializableExtra("goods");
         //保存至足迹
         saveToFootPrint();
-        goodsId = goodsBean.getGoodsId();
+        goodsId = goods.getGoodsId();
         loadGoodDetail(goodsId);
         initCollect(goodsId);
     }
@@ -102,13 +102,8 @@ public class GoodsDetailActivity extends BaseActivity {
     }
 
     private synchronized void saveToFootPrint() {
-        FootPrint bean = new FootPrint();
-        bean.setGoodsId(goodsBean.getGoodsId());
-        bean.setGoodsName(goodsBean.getGoodsName());
-        bean.setCurrencyPrice(goodsBean.getCurrencyPrice());
-        bean.setGoodsThumb(goodsBean.getGoodsThumb());
-        bean.setAddTime(new Date().getTime());
-        DBManager.getInstance().saveFootPrint(bean);
+        goods.setAddTime(new Date().getTime());
+        DBManager.getInstance().saveFootPrint(goods);
     }
 
     private void initView(GoodsDetailsBean result) {

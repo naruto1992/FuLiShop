@@ -24,6 +24,7 @@ import cn.ucai.fulishop.application.FuLiShopApplication;
 import cn.ucai.fulishop.bean.AlbumsBean;
 import cn.ucai.fulishop.bean.GoodsDetailsBean;
 import cn.ucai.fulishop.bean.MessageBean;
+import cn.ucai.fulishop.bean.NewGoodsBean;
 import cn.ucai.fulishop.bean.PropertiesBean;
 import cn.ucai.fulishop.db.DBManager;
 import cn.ucai.fulishop.db.FootPrint;
@@ -41,6 +42,7 @@ import cn.ucai.fulishop.view.SlideAutoLoopView;
 public class GoodsDetailActivity extends BaseActivity {
 
     Context mContext;
+    NewGoodsBean goodsBean;
     int goodsId;
     String userName;
 
@@ -68,7 +70,10 @@ public class GoodsDetailActivity extends BaseActivity {
         ButterKnife.bind(this);
         mContext = this;
 
-        goodsId = getIntent().getIntExtra(I.NewGoods.KEY_GOODS_ID, 0);
+        goodsBean = (NewGoodsBean) getIntent().getSerializableExtra("goods");
+        //保存至足迹
+        saveToFootPrint();
+        goodsId = goodsBean.getGoodsId();
         loadGoodDetail(goodsId);
         initCollect(goodsId);
     }
@@ -85,8 +90,6 @@ public class GoodsDetailActivity extends BaseActivity {
                 loadingDialog.dismiss();
                 if (result != null) {
                     initView(result);
-                    //保存至足迹
-                    saveToFootPrint(result);
                 }
             }
 
@@ -98,12 +101,12 @@ public class GoodsDetailActivity extends BaseActivity {
         });
     }
 
-    private synchronized void saveToFootPrint(GoodsDetailsBean result) {
+    private synchronized void saveToFootPrint() {
         FootPrint bean = new FootPrint();
-        bean.setGoodsId(result.getGoodsId());
-        bean.setGoodsName(bean.getGoodsName());
-        bean.setCurrencyPrice(bean.getCurrencyPrice());
-        bean.setGoodsThumb(bean.getGoodsThumb());
+        bean.setGoodsId(goodsBean.getGoodsId());
+        bean.setGoodsName(goodsBean.getGoodsName());
+        bean.setCurrencyPrice(goodsBean.getCurrencyPrice());
+        bean.setGoodsThumb(goodsBean.getGoodsThumb());
         bean.setAddTime(new Date().getTime());
         DBManager.getInstance().saveFootPrint(bean);
     }

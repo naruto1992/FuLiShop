@@ -15,12 +15,14 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.io.Serializable;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.ucai.fulishop.R;
+import cn.ucai.fulishop.activity.FootPrintsActivity;
 import cn.ucai.fulishop.activity.LoginActivity;
 import cn.ucai.fulishop.activity.UserProfileActivity;
 import cn.ucai.fulishop.api.ApiDao;
@@ -29,7 +31,6 @@ import cn.ucai.fulishop.application.FuLiShopApplication;
 import cn.ucai.fulishop.bean.MessageBean;
 import cn.ucai.fulishop.db.DBManager;
 import cn.ucai.fulishop.db.FootPrint;
-import cn.ucai.fulishop.db.FootPrintDao;
 import cn.ucai.fulishop.db.User;
 import cn.ucai.fulishop.utils.ImageLoader;
 import cn.ucai.fulishop.utils.MFGT;
@@ -139,9 +140,9 @@ public class FragmentPersonal extends Fragment implements SwipeRefreshLayout.OnR
             });
             loadCollectNum();
             loadUserAavatar();
-            personCollect.setEnabled(true);
-            personSetting.setEnabled(true);
-            userInfo.setEnabled(true);
+            personCollect.setEnabled(true);//可以点击
+            personSetting.setEnabled(true);//可以点击
+            userInfo.setEnabled(true);//可以点击
         } else {
             tvUserNick.setText("登录/注册");
             tvUserNick.setOnClickListener(new View.OnClickListener() {
@@ -151,9 +152,9 @@ public class FragmentPersonal extends Fragment implements SwipeRefreshLayout.OnR
                 }
             });
             personCollectNum.setText("0");
-            personCollect.setEnabled(false);
-            personSetting.setEnabled(false);
-            userInfo.setEnabled(false);
+            personCollect.setEnabled(false); //不能点击
+            personSetting.setEnabled(false);//不能点击
+            userInfo.setEnabled(false);//不能点击
             //
             ivUserAvatar.setImageResource(R.drawable.default_face);
         }
@@ -216,7 +217,8 @@ public class FragmentPersonal extends Fragment implements SwipeRefreshLayout.OnR
                 ToastUtil.show(mContext, "我的收藏");
                 break;
             case R.id.footPrint:
-                ToastUtil.show(mContext, "我的足迹");
+                Intent intent = new Intent(getActivity(), FootPrintsActivity.class);
+                startActivity(intent);
                 break;
         }
     }

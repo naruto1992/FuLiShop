@@ -269,9 +269,8 @@ public class CatListActivity extends BaseActivity implements SwipeRefreshLayout.
     @Override
     public void onItemClick(int position, int itemType) {
         NewGoodsBean bean = adapter.getData().get(position);
-        int goodsId = bean.getGoodsId();
         Intent intent = new Intent(this, GoodsDetailActivity.class);
-        intent.putExtra(I.NewGoods.KEY_GOODS_ID, goodsId);
+        intent.putExtra("goods", bean);
         MFGT.startActivityByIntent(this, intent);
     }
 }

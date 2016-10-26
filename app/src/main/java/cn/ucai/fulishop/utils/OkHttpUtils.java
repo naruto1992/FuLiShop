@@ -3,8 +3,11 @@ package cn.ucai.fulishop.utils;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
+import android.text.TextUtils;
+import android.util.Log;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -365,6 +368,7 @@ public class OkHttpUtils<T> {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String json = response.body().string();
+                Log.e("json", "json===>" + json);
                 if (mClazz.equals(String.class)) {
                     Message msg = Message.obtain();
                     msg.what = RESULT_SUCCESS;

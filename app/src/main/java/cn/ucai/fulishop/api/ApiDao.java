@@ -11,6 +11,7 @@ import cn.ucai.fulishop.bean.BoutiqueBean;
 import cn.ucai.fulishop.bean.CartBean;
 import cn.ucai.fulishop.bean.CategoryChildBean;
 import cn.ucai.fulishop.bean.CategoryGroupBean;
+import cn.ucai.fulishop.bean.CollectBean;
 import cn.ucai.fulishop.bean.GoodsDetailsBean;
 import cn.ucai.fulishop.bean.MessageBean;
 import cn.ucai.fulishop.bean.NewGoodsBean;
@@ -274,12 +275,12 @@ public class ApiDao {
      * @param listener
      */
     public static void loadCollectList(Context context, String uerName, int pageId, OkHttpUtils.OnCompleteListener listener) {
-        OkHttpUtils<String> utils = new OkHttpUtils<>(context);
+        OkHttpUtils<CollectBean[]> utils = new OkHttpUtils<>(context);
         utils.setRequestUrl(I.REQUEST_FIND_COLLECTS)
                 .addParam(I.Cart.USER_NAME, uerName)
                 .addParam(I.PAGE_ID, "" + pageId)
                 .addParam(I.PAGE_SIZE, "" + I.PAGE_SIZE_DEFAULT)
-                .targetClass(String.class)
+                .targetClass(CollectBean[].class)
                 .execute(listener);
     }
 

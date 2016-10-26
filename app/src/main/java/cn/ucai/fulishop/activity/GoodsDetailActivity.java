@@ -42,7 +42,6 @@ import cn.ucai.fulishop.view.SlideAutoLoopView;
 public class GoodsDetailActivity extends BaseActivity {
 
     Context mContext;
-    FootPrint goods;
     int goodsId;
     String userName;
 
@@ -70,10 +69,7 @@ public class GoodsDetailActivity extends BaseActivity {
         ButterKnife.bind(this);
         mContext = this;
 
-        goods = (FootPrint) getIntent().getSerializableExtra("goods");
-        //保存至足迹
-        saveToFootPrint();
-        goodsId = goods.getGoodsId();
+        goodsId = getIntent().getIntExtra("goodsId", 0);
         loadGoodDetail(goodsId);
         initCollect(goodsId);
     }
@@ -90,6 +86,8 @@ public class GoodsDetailActivity extends BaseActivity {
                 loadingDialog.dismiss();
                 if (result != null) {
                     initView(result);
+                    //保存至足迹
+                    saveToFootPrint(result);
                 }
             }
 
@@ -101,9 +99,15 @@ public class GoodsDetailActivity extends BaseActivity {
         });
     }
 
-    private synchronized void saveToFootPrint() {
-        goods.setAddTime(new Date().getTime());
-        DBManager.getInstance().saveFootPrint(goods);
+    //保存至足迹
+    private synchronized void saveToFootPrint(GoodsDetailsBean result) {
+        FootPrint footPrint = new FootPrint();
+        footPrint.setGoodsId(result.getGoodsId());
+        footPrint.setGoodsName(result.getGoodsName());
+        footPrint.setCurrencyPrice(result.getCurrencyPrice());
+        footPrint.setGoodsThumb(result.getGoodsThumb());
+        footPrint.setAddTime(new Date().getTime());
+        DBManager.getInstance().saveFootPrint(footPrint);
     }
 
     private void initView(GoodsDetailsBean result) {

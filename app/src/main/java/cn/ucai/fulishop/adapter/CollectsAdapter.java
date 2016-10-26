@@ -60,14 +60,14 @@ public class CollectsAdapter extends RecyclerView.Adapter<CollectsAdapter.Collec
     }
 
     //刷新
-    public void init(ArrayList<CollectBean> list) {
+    public void init(List<CollectBean> list) {
         this.collectList.clear();
         this.collectList.addAll(list);
         notifyDataSetChanged();
     }
 
     //加载更多
-    public void loadMore(ArrayList<CollectBean> list) {
+    public void loadMore(List<CollectBean> list) {
         this.collectList.addAll(list);
         notifyDataSetChanged();
     }

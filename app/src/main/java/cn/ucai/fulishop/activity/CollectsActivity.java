@@ -6,6 +6,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 
 import com.google.gson.Gson;
 
@@ -49,6 +50,11 @@ public class CollectsActivity extends AppCompatActivity implements SwipeRefreshL
         ButterKnife.bind(this);
         mContext = this;
         initView();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
         loadCollectsList(I.ACTION_DOWNLOAD, pageId); //第一次下载
     }
 
@@ -87,8 +93,8 @@ public class CollectsActivity extends AppCompatActivity implements SwipeRefreshL
         });
     }
 
-    private void loadCollectsList(final int action, int pageId) {
-        ApiDao.loadCollectList(mContext, userName, pageId, new OkHttpUtils.OnCompleteListener<String>() {
+    private void loadCollectsList(final int action, final int pageId) {
+        ApiDao.loadCollectList(mContext, userName, pageId, new OkHttpUtils.OnCompleteListener<CollectBean[]>() {
             @Override
             public void onStart() {
                 if (action != I.ACTION_PULL_DOWN) {
@@ -97,13 +103,12 @@ public class CollectsActivity extends AppCompatActivity implements SwipeRefreshL
             }
 
             @Override
-            public void onSuccess(String result) {
+            public void onSuccess(CollectBean[] result) {
                 if (loadingDialog.isShowing()) {
                     loadingDialog.dismiss();
                 }
-                if (result != null) {
-                    CollectBean[] beanList = new Gson().fromJson(result, CollectBean[].class);
-                    ArrayList<CollectBean> collectsList = ListUtil.array2List(beanList);
+                if (result != null && result.length > 0) {
+                    ArrayList<CollectBean> collectsList = ListUtil.array2List(result);
                     switch (action) {
                         case I.ACTION_DOWNLOAD: //第一次加载
                             adapter.init(collectsList);
@@ -119,17 +124,21 @@ public class CollectsActivity extends AppCompatActivity implements SwipeRefreshL
                     adapter.setMore(collectsList.size() == I.PAGE_SIZE_DEFAULT);
                 } else {
                     collectsSrl.setRefreshing(false);
+                    if (pageId == 1) {
+                        adapter.init(new ArrayList<CollectBean>());
+                        ToastUtil.show(mContext, "您还未收藏任何商品哦");
+                    }
                     adapter.setMore(false);
                 }
             }
 
             @Override
             public void onError(final String error) {
-                if (action == I.ACTION_PULL_DOWN) {
-                    collectsSrl.setRefreshing(false);
-                }
                 if (loadingDialog.isShowing()) {
                     loadingDialog.dismiss();
+                }
+                if (action == I.ACTION_PULL_DOWN) {
+                    collectsSrl.setRefreshing(false);
                 }
                 ToastUtil.show(mContext, error);
             }
@@ -143,4 +152,5 @@ public class CollectsActivity extends AppCompatActivity implements SwipeRefreshL
         collectsSrl.setEnabled(true);
         collectsSrl.setRefreshing(true);
     }
+
 }

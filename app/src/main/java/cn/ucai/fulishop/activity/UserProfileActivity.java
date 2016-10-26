@@ -9,7 +9,10 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.NumberPicker;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -22,7 +25,11 @@ import cn.ucai.fulishop.R;
 import cn.ucai.fulishop.api.ApiDao;
 import cn.ucai.fulishop.api.I;
 import cn.ucai.fulishop.application.FuLiShopApplication;
+import cn.ucai.fulishop.bean.MessageBean;
+import cn.ucai.fulishop.bean.Result;
+import cn.ucai.fulishop.db.User;
 import cn.ucai.fulishop.utils.AvatarUtil;
+import cn.ucai.fulishop.utils.DialogUtil;
 import cn.ucai.fulishop.utils.ImageLoader;
 import cn.ucai.fulishop.utils.MFGT;
 import cn.ucai.fulishop.utils.OkHttpUtils;
@@ -46,6 +53,7 @@ public class UserProfileActivity extends BaseActivity {
     @BindView(R.id.btnLogout)
     Button btnLogout;  //注销
 
+    User user;
     String mUserName;
     String nick;
     AvatarUtil avatarUtil;
@@ -60,26 +68,18 @@ public class UserProfileActivity extends BaseActivity {
     }
 
     private void initView() {
-        mUserName = FuLiShopApplication.getInstance().getUserName();
-        userName.setText(mUserName);
-        nick = FuLiShopApplication.getInstance().getUserNick();
+        user = FuLiShopApplication.getUser();
+        mUserName = user.getMuserName();
+        nick = user.getMuserNick();
 
+        userName.setText(mUserName);
         userNick.setText(nick);
         loadUserAavatar();
     }
 
     //下载用户头像
     private void loadUserAavatar() {
-        ImageLoader.build(I.DOWNLOAD_AVATAR_URL)
-                .addParam(I.NAME_OR_HXID, mUserName)
-                .addParam(I.AVATAR_TYPE, I.AVATAR_TYPE_USER_PATH)
-                .addParam("m_avatar_suffix", I.AVATAR_SUFFIX_JPG)
-                .addParam("width", "200")
-                .addParam("height", "200")
-                .defaultPicture(R.drawable.default_face)
-                .imageView(userAvatar)
-                .listener(llUserAvatar)
-                .showImage(mContext);
+        ImageLoader.setAvatar(ImageLoader.getAvatarUrl(user), mContext, userAvatar);
     }
 
 
@@ -90,6 +90,7 @@ public class UserProfileActivity extends BaseActivity {
                 avatarUtil = new AvatarUtil(this, mUserName, I.AVATAR_TYPE_USER_PATH);
                 break;
             case R.id.userNick:
+                editNick();
                 break;
             case R.id.ivUserQrcode:
                 break;
@@ -114,13 +115,57 @@ public class UserProfileActivity extends BaseActivity {
         }
     }
 
+    private void editNick() {
+        final EditText numberPicker = new EditText(this);
+        numberPicker.setText(nick);
+        new AlertDialog.Builder(this)
+                .setMessage("请输入您的昵称").setView(numberPicker)
+                .setNegativeButton("取消", null)
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+
+                    public void onClick(DialogInterface dialog, int which) {
+                        String nick = numberPicker.getEditableText().toString().trim();
+                        updateNick(nick);
+                    }
+                })
+                .create().show();
+    }
+
+    private void updateNick(final String nick) {
+        ApiDao.updateNick(mContext, mUserName, nick, new OkHttpUtils.OnCompleteListener<Result>() {
+            @Override
+            public void onStart() {
+                loadingDialog.show();
+            }
+
+            @Override
+            public void onSuccess(Result result) {
+                loadingDialog.dismiss();
+                if (result.getRetCode() == 0 && result.isRetMsg()) {
+                    userNick.setText(nick);
+                    FuLiShopApplication.getInstance().setUserNick(nick);
+                    ToastUtil.show(mContext, "昵称修改成功");
+                    // 发送广播通知
+                    Intent intent = new Intent(I.NEED_UPDATE);
+                    LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
+                }
+            }
+
+            @Override
+            public void onError(String error) {
+                loadingDialog.dismiss();
+                ToastUtil.show(mContext, error);
+            }
+        });
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode != RESULT_OK) {
             return;
         }
-        avatarUtil.setAvatarCallBack(requestCode, data, userAvatar);
+        avatarUtil.setAvatarCallBack(requestCode, data, userAvatar);//回调成功后自动显示
         if (requestCode == AvatarUtil.REQUEST_CROP_PHOTO) {
             updateAvatar();
         }
@@ -131,20 +176,27 @@ public class UserProfileActivity extends BaseActivity {
         File file = new File(AvatarUtil.getAvatarPath(mContext,
                 I.AVATAR_TYPE_USER_PATH + "/" + mUserName
                         + I.AVATAR_SUFFIX_JPG));
-        ApiDao.updateAvatar(mContext, mUserName, file, new OkHttpUtils.OnCompleteListener<String>() {
+        ApiDao.updateAvatar(mContext, mUserName, file, new OkHttpUtils.OnCompleteListener<Result>() {
             @Override
             public void onStart() {
-
+                loadingDialog.show();
             }
 
             @Override
-            public void onSuccess(String result) {
-
+            public void onSuccess(Result result) {
+                loadingDialog.dismiss();
+                if (result.getRetCode() == 0 && result.isRetMsg()) {
+                    ToastUtil.show(mContext, "头像修改成功");
+                    // 发送广播通知
+                    Intent intent = new Intent(I.NEED_UPDATE);
+                    LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
+                }
             }
 
             @Override
             public void onError(String error) {
-
+                loadingDialog.dismiss();
+                ToastUtil.show(mContext, error);
             }
         });
     }
@@ -155,7 +207,7 @@ public class UserProfileActivity extends BaseActivity {
                 .setPositiveButton("注销", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        FuLiShopApplication.getInstance().setLogined(false);
+                        FuLiShopApplication.getInstance().logout(user);
                         // 发送广播通知
                         Intent intent = new Intent(I.HASLOGINOUT);
                         LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);

@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import cn.ucai.fulishop.api.I;
-import cn.ucai.fulishop.bean.UserBean;
+import cn.ucai.fulishop.db.User;
 
 /**
  * Created by Shinelon on 2016/10/13.
@@ -62,16 +62,4 @@ public class PreferencesUtil {
         return getString(context, I.User.USER_NAME);
     }
 
-    public static void saveUserNick(Context context, String nick) {
-        putString(context, I.User.NICK, nick);
-    }
-
-    public static String getUserNick(Context context) {
-        return getString(context, I.User.NICK);
-    }
-
-    public static void saveUser(Context context, UserBean user) {
-        saveUserName(context, user.getMuserName());
-        saveUserNick(context, user.getMuserNick());
-    }
 }

@@ -2,14 +2,12 @@ package cn.ucai.fulishop.fragment;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,8 +27,10 @@ import cn.ucai.fulishop.api.ApiDao;
 import cn.ucai.fulishop.api.I;
 import cn.ucai.fulishop.application.FuLiShopApplication;
 import cn.ucai.fulishop.bean.MessageBean;
+import cn.ucai.fulishop.db.DBManager;
+import cn.ucai.fulishop.db.FootPrint;
 import cn.ucai.fulishop.db.FootPrintDao;
-import cn.ucai.fulishop.db.GoodsBean;
+import cn.ucai.fulishop.db.User;
 import cn.ucai.fulishop.utils.ImageLoader;
 import cn.ucai.fulishop.utils.MFGT;
 import cn.ucai.fulishop.utils.OkHttpUtils;
@@ -63,15 +63,13 @@ public class FragmentPersonal extends Fragment implements SwipeRefreshLayout.OnR
     @BindView(R.id.userInfo)
     LinearLayout userInfo; //用户信息栏
 
+    User user;
     boolean logined = false;
-    FootPrintDao footPrintDao;
-    List<GoodsBean> footPrints;
+    List<FootPrint> footPrints;
     String userName;
-    ViewGroup parent;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        parent = container;
         View layout = inflater.inflate(R.layout.fragment_personal, container, false);
         ButterKnife.bind(this, layout);
         return layout;
@@ -101,6 +99,7 @@ public class FragmentPersonal extends Fragment implements SwipeRefreshLayout.OnR
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(I.HASLOGINED);
         intentFilter.addAction(I.HASLOGINOUT);
+        intentFilter.addAction(I.NEED_UPDATE);
         final BroadcastReceiver mReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -117,6 +116,8 @@ public class FragmentPersonal extends Fragment implements SwipeRefreshLayout.OnR
                         intent.putExtra(I.Cart.COUNT, 0);
                         LocalBroadcastManager.getInstance(mContext).sendBroadcast(cart);
                         break;
+                    case I.NEED_UPDATE:
+                        break;
                 }
                 init(logined);
             }
@@ -126,8 +127,16 @@ public class FragmentPersonal extends Fragment implements SwipeRefreshLayout.OnR
 
     private void init(boolean logined) {
         if (logined) {
-            userName = FuLiShopApplication.getInstance().getUserName();
-            tvUserNick.setText(FuLiShopApplication.getInstance().getUserNick());
+            user = FuLiShopApplication.getUser();
+            userName = user.getMuserName();
+            tvUserNick.setText(user.getMuserNick());
+            tvUserNick.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent profile = new Intent(mContext, UserProfileActivity.class);
+                    startActivity(profile);
+                }
+            });
             loadCollectNum();
             loadUserAavatar();
             personCollect.setEnabled(true);
@@ -145,26 +154,18 @@ public class FragmentPersonal extends Fragment implements SwipeRefreshLayout.OnR
             personCollect.setEnabled(false);
             personSetting.setEnabled(false);
             userInfo.setEnabled(false);
+            //
+            ivUserAvatar.setImageResource(R.drawable.default_face);
         }
         //获取足迹
-        footPrintDao = FootPrintDao.getInstance();
-        footPrints = footPrintDao.findAllFootPrint();
+        footPrints = DBManager.getInstance().findAllFootPrint();
         footprintNum.setText("" + footPrints.size());
         personSrl.setRefreshing(false);
     }
 
     //下载用户头像
     private void loadUserAavatar() {
-        ImageLoader.build(I.DOWNLOAD_AVATAR_URL)
-                .addParam(I.NAME_OR_HXID, userName)
-                .addParam(I.AVATAR_TYPE, I.AVATAR_TYPE_USER_PATH)
-                .addParam("m_avatar_suffix", I.AVATAR_SUFFIX_JPG)
-                .addParam("width", "200")
-                .addParam("height", "200")
-                .defaultPicture(R.drawable.default_face)
-                .imageView(ivUserAvatar)
-                .listener(parent)
-                .showImage(mContext);
+        ImageLoader.setAvatar(ImageLoader.getAvatarUrl(user), mContext, ivUserAvatar);
     }
 
     //加载收藏数量

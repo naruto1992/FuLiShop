@@ -14,6 +14,7 @@ import cn.ucai.fulishop.bean.CategoryGroupBean;
 import cn.ucai.fulishop.bean.GoodsDetailsBean;
 import cn.ucai.fulishop.bean.MessageBean;
 import cn.ucai.fulishop.bean.NewGoodsBean;
+import cn.ucai.fulishop.bean.Result;
 import cn.ucai.fulishop.utils.OkHttpUtils;
 
 /**
@@ -249,6 +250,13 @@ public class ApiDao {
                 .execute(listener);
     }
 
+    /**
+     * 加载收藏数量
+     *
+     * @param context
+     * @param uerName
+     * @param listener
+     */
     public static void loadCollectCount(Context context, String uerName, OkHttpUtils.OnCompleteListener listener) {
         OkHttpUtils<MessageBean> utils = new OkHttpUtils<>(context);
         utils.setRequestUrl(I.REQUEST_FIND_COLLECT_COUNT)
@@ -257,14 +265,31 @@ public class ApiDao {
                 .execute(listener);
     }
 
-    public static void updateAvatar(Context context, String username, File file, OkHttpUtils.OnCompleteListener<String> listener){
-        OkHttpUtils<String> utils = new OkHttpUtils<>(context);
+    /**
+     * 更新头像
+     *
+     * @param context
+     * @param username
+     * @param file
+     * @param listener
+     */
+    public static void updateAvatar(Context context, String username, File file, OkHttpUtils.OnCompleteListener<Result> listener) {
+        OkHttpUtils<Result> utils = new OkHttpUtils<>(context);
         utils.setRequestUrl(I.REQUEST_UPDATE_AVATAR)
-                .addParam(I.NAME_OR_HXID,username)
-                .addParam(I.AVATAR_TYPE,I.AVATAR_TYPE_USER_PATH)
+                .addParam(I.NAME_OR_HXID, username)
+                .addParam(I.AVATAR_TYPE, I.AVATAR_TYPE_USER_PATH)
                 .addFile2(file)
-                .targetClass(String.class)
+                .targetClass(Result.class)
                 .post()
+                .execute(listener);
+    }
+
+    public static void updateNick(Context context, String username, String nick, OkHttpUtils.OnCompleteListener<Result> listener) {
+        OkHttpUtils<Result> utils = new OkHttpUtils<>(context);
+        utils.setRequestUrl(I.REQUEST_UPDATE_USER_NICK)
+                .addParam(I.User.USER_NAME, username)
+                .addParam(I.User.NICK, nick)
+                .targetClass(Result.class)
                 .execute(listener);
     }
 

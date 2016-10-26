@@ -4,6 +4,9 @@ import android.os.Bundle;
 import android.os.Handler;
 
 import cn.ucai.fulishop.R;
+import cn.ucai.fulishop.application.FuLiShopApplication;
+import cn.ucai.fulishop.db.DBManager;
+import cn.ucai.fulishop.db.User;
 import cn.ucai.fulishop.utils.MFGT;
 
 /**
@@ -35,6 +38,12 @@ public class WelcomeActivity extends BaseActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
+                User user = FuLiShopApplication.getUser();
+                String userName = FuLiShopApplication.getInstance().getUserName();
+                if (user == null && userName != null) {
+                    user = DBManager.getInstance().getUser(userName);
+                    FuLiShopApplication.setUser(user);
+                }
                 MFGT.gotoMainActivity(WelcomeActivity.this);
                 finish();
             }

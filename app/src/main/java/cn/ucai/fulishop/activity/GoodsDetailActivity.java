@@ -3,12 +3,9 @@ package cn.ucai.fulishop.activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
-import android.text.InputType;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.NumberPicker;
@@ -28,15 +25,14 @@ import cn.ucai.fulishop.bean.AlbumsBean;
 import cn.ucai.fulishop.bean.GoodsDetailsBean;
 import cn.ucai.fulishop.bean.MessageBean;
 import cn.ucai.fulishop.bean.PropertiesBean;
-import cn.ucai.fulishop.db.FootPrintDao;
-import cn.ucai.fulishop.db.GoodsBean;
+import cn.ucai.fulishop.db.DBManager;
+import cn.ucai.fulishop.db.FootPrint;
 import cn.ucai.fulishop.utils.ListUtil;
 import cn.ucai.fulishop.utils.MFGT;
 import cn.ucai.fulishop.utils.OkHttpUtils;
 import cn.ucai.fulishop.utils.ToastUtil;
 import cn.ucai.fulishop.view.FlowIndicator;
 import cn.ucai.fulishop.view.SlideAutoLoopView;
-import cn.ucai.fulishop.view.TitleBar;
 
 /**
  * Created by Administrator on 2016/10/19.
@@ -103,14 +99,13 @@ public class GoodsDetailActivity extends BaseActivity {
     }
 
     private synchronized void saveToFootPrint(GoodsDetailsBean result) {
-        GoodsBean bean = new GoodsBean();
+        FootPrint bean = new FootPrint();
         bean.setGoodsId(result.getGoodsId());
         bean.setGoodsName(bean.getGoodsName());
         bean.setCurrencyPrice(bean.getCurrencyPrice());
         bean.setGoodsThumb(bean.getGoodsThumb());
         bean.setAddTime(new Date().getTime());
-        FootPrintDao dao = FootPrintDao.getInstance();
-        dao.saveFootPrint(bean);
+        DBManager.getInstance().saveFootPrint(bean);
     }
 
     private void initView(GoodsDetailsBean result) {

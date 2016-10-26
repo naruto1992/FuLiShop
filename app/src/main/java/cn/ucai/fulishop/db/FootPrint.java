@@ -12,7 +12,7 @@ import java.io.Serializable;
  */
 
 @Entity
-public class GoodsBean implements Serializable {
+public class FootPrint implements Serializable {
 
     private static final long serialVersionUID = -6812146008368959939L;
     @Id
@@ -28,8 +28,8 @@ public class GoodsBean implements Serializable {
     @Property(nameInDb = "GOODS_ADDTIME")
     private long addTime;
 
-    @Generated(hash = 12684932)
-    public GoodsBean(Long id, int goodsId, String goodsName, String currencyPrice,
+    @Generated(hash = 1355138872)
+    public FootPrint(Long id, int goodsId, String goodsName, String currencyPrice,
             String goodsThumb, long addTime) {
         this.id = id;
         this.goodsId = goodsId;
@@ -39,8 +39,8 @@ public class GoodsBean implements Serializable {
         this.addTime = addTime;
     }
 
-    @Generated(hash = 1806305570)
-    public GoodsBean() {
+    @Generated(hash = 1454026486)
+    public FootPrint() {
     }
 
     public Long getId() {
@@ -93,7 +93,7 @@ public class GoodsBean implements Serializable {
 
     @Override
     public String toString() {
-        return "GoodsBean{" +
+        return "FootPrint{" +
                 "id=" + id +
                 ", goodsId=" + goodsId +
                 ", goodsName='" + goodsName + '\'' +

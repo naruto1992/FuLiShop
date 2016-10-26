@@ -88,7 +88,7 @@
 
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="70dp"
+                        android:layout_height="60dp"
                         android:layout_marginTop="10dp"
                         android:background="@color/half_transparent">
 
@@ -114,7 +114,7 @@
                                 android:layout_marginTop="10dp"
                                 android:text="收藏的宝贝"
                                 android:textColor="@color/white"
-                                android:textSize="18sp" />
+                                android:textSize="16sp" />
 
                         </LinearLayout>
 
@@ -147,7 +147,7 @@
                                 android:layout_marginTop="10dp"
                                 android:text="我的足迹"
                                 android:textColor="@color/white"
-                                android:textSize="18sp" />
+                                android:textSize="16sp" />
                         </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
@@ -316,8 +316,8 @@
                             android:layout_marginLeft="10dp"
                             android:layout_toRightOf="@id/ivCoupon1"
                             android:text="生活券"
-                            android:textColor="@color/gray"
-                            android:textSize="18sp" />
+                            android:textColor="@color/black"
+                            android:textSize="16sp" />
 
                         <ImageView
                             android:layout_width="wrap_content"
@@ -353,7 +353,7 @@
                             android:layout_toRightOf="@id/ivCoupon2"
                             android:text="网店券"
                             android:textColor="@color/black"
-                            android:textSize="18sp" />
+                            android:textSize="16sp" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -391,7 +391,7 @@
                             android:layout_toRightOf="@id/ivCoupon3"
                             android:text="会员卡"
                             android:textColor="@color/black"
-                            android:textSize="18sp" />
+                            android:textSize="16sp" />
 
                         <TextView
                             android:layout_width="wrap_content"

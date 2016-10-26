@@ -4,6 +4,7 @@ package cn.ucai.fulishop.api;
 public interface I {
     String HASLOGINED = "hasLogined";  //已登录
     String HASLOGINOUT = "hasLoginout"; //已注销
+    String NEED_UPDATE = "needUpdate";  //需要更新
 
     String SERVER_ROOT = "http://101.251.196.90:8000/FuLiCenterServerV2.0/";
     /**
@@ -403,6 +404,9 @@ public interface I {
      * 用户的账号或群组的环信id
      */
     String NAME_OR_HXID = "name_or_hxid";
+
+    String AVATAR_SUFFIX = "m_avatar_suffix";
+
     /**
      * 客户端发送的获取服务端状态的请求
      */

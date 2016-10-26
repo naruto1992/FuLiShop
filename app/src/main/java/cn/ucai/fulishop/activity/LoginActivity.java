@@ -3,14 +3,9 @@ package cn.ucai.fulishop.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import com.google.gson.Gson;
 
@@ -21,14 +16,13 @@ import cn.ucai.fulishop.R;
 import cn.ucai.fulishop.api.I;
 import cn.ucai.fulishop.application.FuLiShopApplication;
 import cn.ucai.fulishop.bean.Result;
-import cn.ucai.fulishop.bean.UserBean;
+import cn.ucai.fulishop.db.DBManager;
+import cn.ucai.fulishop.db.User;
 import cn.ucai.fulishop.utils.EditUtil;
 import cn.ucai.fulishop.utils.MFGT;
 import cn.ucai.fulishop.utils.OkHttpUtils;
 import cn.ucai.fulishop.utils.ToastUtil;
 import cn.ucai.fulishop.view.TitleBar;
-
-import static android.support.v7.app.ActionBar.DISPLAY_SHOW_CUSTOM;
 
 public class LoginActivity extends BaseActivity {
 
@@ -83,9 +77,9 @@ public class LoginActivity extends BaseActivity {
                         if (result.getRetCode() == 0 && result.isRetMsg()) {
                             ToastUtil.show(mContext, "登录成功");
                             Gson gson = new Gson();
-                            UserBean userBean = gson.fromJson(result.getRetData().toString(), UserBean.class);
-                            FuLiShopApplication.getInstance().saveUser(userBean);
-                            FuLiShopApplication.getInstance().setLogined(true);
+                            User userBean = gson.fromJson(result.getRetData().toString(), User.class);
+                            //保存用户信息
+                            FuLiShopApplication.setUser(userBean);
                             // 发送广播通知
                             Intent intent = new Intent(I.HASLOGINED);
                             LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);

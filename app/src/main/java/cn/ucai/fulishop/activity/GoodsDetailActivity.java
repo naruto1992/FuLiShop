@@ -19,12 +19,10 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.ucai.fulishop.R;
 import cn.ucai.fulishop.api.ApiDao;
-import cn.ucai.fulishop.api.I;
 import cn.ucai.fulishop.application.FuLiShopApplication;
 import cn.ucai.fulishop.bean.AlbumsBean;
 import cn.ucai.fulishop.bean.GoodsDetailsBean;
 import cn.ucai.fulishop.bean.MessageBean;
-import cn.ucai.fulishop.bean.NewGoodsBean;
 import cn.ucai.fulishop.bean.PropertiesBean;
 import cn.ucai.fulishop.db.DBManager;
 import cn.ucai.fulishop.db.FootPrint;
@@ -178,9 +176,10 @@ public class GoodsDetailActivity extends BaseActivity {
             final NumberPicker numberPicker = new NumberPicker(this);
             numberPicker.setOrientation(LinearLayout.HORIZONTAL);
             numberPicker.setMinValue(1);
-            numberPicker.setMaxValue(99);
+            numberPicker.setMaxValue(10);
             new AlertDialog.Builder(this)
-                    .setMessage("请选择商品数量").setView(numberPicker)
+                    .setView(numberPicker)
+                    .setMessage("请选择商品数量")
                     .setNegativeButton("取消", null)
                     .setPositiveButton("确定", new DialogInterface.OnClickListener() {
 

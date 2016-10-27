@@ -68,20 +68,6 @@
             android:textSize="18sp"
             android:visibility="visible" />
 
-        <EditText
-            android:id="@+id/etCartNum"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_alignParentBottom="true"
-            android:layout_marginLeft="10dp"
-            android:layout_toRightOf="@id/cartNumber"
-            android:background="@null"
-            android:gravity="bottom"
-            android:inputType="number"
-            android:maxLength="2"
-            android:maxLines="1"
-            android:visibility="invisible" />
-
         <cn.ucai.fulishop.view.BottomLineTextView
             android:id="@+id/bltCartNumEdit"
             android:layout_width="wrap_content"
@@ -93,19 +79,6 @@
             android:textColor="@drawable/selector_text"
             android:textSize="16sp"
             android:visibility="visible" />
-
-        <Button
-            android:id="@+id/btnCartNumConfirm"
-            android:layout_width="40dp"
-            android:layout_height="30dp"
-            android:layout_alignParentBottom="true"
-            android:layout_marginLeft="10dp"
-            android:layout_toRightOf="@id/tvCartNum"
-            android:background="@drawable/btn_login_bg"
-            android:text="确定"
-            android:textColor="@color/white"
-            android:textSize="14sp"
-            android:visibility="invisible" />
     </RelativeLayout>
 
 

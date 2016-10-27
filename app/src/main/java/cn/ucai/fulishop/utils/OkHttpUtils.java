@@ -332,7 +332,7 @@ public class OkHttpUtils<T> {
             mListener = listener;
         }
         Request.Builder builder = new Request.Builder().url(mUrl.toString());
-        LogUtil.e("url=" + mUrl);
+        LogUtil.i("url=" + mUrl);
         if (mFormBodyBuilder != null) {
             RequestBody body = mFormBodyBuilder.build();
             builder.post(body);
@@ -368,7 +368,7 @@ public class OkHttpUtils<T> {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String json = response.body().string();
-                Log.e("json", "json===>" + json);
+                Log.i("json", "json===>" + json);
                 if (mClazz.equals(String.class)) {
                     Message msg = Message.obtain();
                     msg.what = RESULT_SUCCESS;

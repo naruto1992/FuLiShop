@@ -75,11 +75,6 @@ public class CartBean implements Serializable {
     }
 
     @Override
-    public int hashCode() {
-        return getId();
-    }
-
-    @Override
     public String toString() {
         return "CartBean{" +
                 "id=" + id +

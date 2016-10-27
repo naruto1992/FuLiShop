@@ -1,6 +1,8 @@
 package cn.ucai.fulishop.adapter;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.text.TextUtils;
@@ -12,6 +14,8 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.NumberPicker;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -96,8 +100,7 @@ public class CartListAdapter extends RecyclerView.Adapter<ViewHolder> implements
         CartBean bean = cartList.get(position);
         itemViewHolder.cartItemLayout.setTag(position);
         itemViewHolder.cbCart.setTag(position);
-        itemViewHolder.bltCartNumEdit.setTag(bean.getCount());
-        itemViewHolder.btnCartNumConfirm.setTag(position);
+        itemViewHolder.bltCartNumEdit.setTag(position);
         //
         itemViewHolder.cbCart.setChecked(bean.isChecked());
         itemViewHolder.tvCartNum.setText("(" + bean.getCount() + ")");
@@ -134,14 +137,8 @@ public class CartListAdapter extends RecyclerView.Adapter<ViewHolder> implements
         @BindView(R.id.tvCartNum)
         TextView tvCartNum; //商品数量
 
-        @BindView(R.id.etCartNum)
-        EditText etCartNum; //编辑数量编辑框
-
         @BindView(R.id.bltCartNumEdit)
         BottomLineTextView bltCartNumEdit; //编辑数量按钮
-
-        @BindView(R.id.btnCartNumConfirm)
-        Button btnCartNumConfirm;  //确定商品数量按钮
 
         @BindView(R.id.tvCartTotalPrice)
         TextView tvCartTotalPrice;  //商品总价
@@ -161,30 +158,27 @@ public class CartListAdapter extends RecyclerView.Adapter<ViewHolder> implements
 
         @OnClick(R.id.bltCartNumEdit)
         public void cartNumEdit(View v) {
-            tvCartNum.setVisibility(View.INVISIBLE);
-            etCartNum.setVisibility(View.VISIBLE);
-            bltCartNumEdit.setVisibility(View.INVISIBLE);
-            btnCartNumConfirm.setVisibility(View.VISIBLE);
-            //
-            int count = (int) v.getTag();
-            etCartNum.setText("" + count);
-        }
+            final int position = (int) v.getTag();
+            CartBean bean = getCartList().get(position);
+            final NumberPicker numberPicker = new NumberPicker(context);
+            numberPicker.setOrientation(LinearLayout.HORIZONTAL);
+            numberPicker.setMinValue(1);
+            numberPicker.setMaxValue(10);
+            numberPicker.setValue(bean.getCount());
+            new AlertDialog.Builder(context)
+                    .setView(numberPicker)
+                    .setMessage("请选择数量")
+                    .setNegativeButton("取消", null)
+                    .setPositiveButton("确定", new DialogInterface.OnClickListener() {
 
-        @OnClick(R.id.btnCartNumConfirm)
-        public void cartNumConfirm(View v) {
-            tvCartNum.setVisibility(View.VISIBLE);
-            etCartNum.setVisibility(View.INVISIBLE);
-            bltCartNumEdit.setVisibility(View.VISIBLE);
-            btnCartNumConfirm.setVisibility(View.INVISIBLE);
-            int position = (int) v.getTag();
-            int number = 1;
-            String temp = etCartNum.getEditableText().toString().trim();
-            if (!TextUtils.isEmpty(temp)) {
-                number = Integer.parseInt(temp);
-            }
-            if (cartListener != null) {
-                cartListener.onCountChanged(position, number);
-            }
+                        public void onClick(DialogInterface dialog, int which) {
+                            int count = numberPicker.getValue();
+                            if (cartListener != null) {
+                                cartListener.onCountChanged(position, count);
+                            }
+                        }
+                    })
+                    .create().show();
         }
 
         @OnCheckedChanged(R.id.cbCart)

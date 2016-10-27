@@ -156,9 +156,7 @@ public class FragmentCart extends BaseFragment implements SwipeRefreshLayout.OnR
                             break;
                     }
                     count = list.size();
-                    if (count != 0) {
-                        noCartHint.setVisibility(View.GONE);
-                    }
+                    noCartHint.setVisibility(count != 0 ? View.GONE : View.VISIBLE);
                 } else {
                     count = 0;
                     noCartHint.setVisibility(View.VISIBLE);
@@ -229,8 +227,7 @@ public class FragmentCart extends BaseFragment implements SwipeRefreshLayout.OnR
                             @Override
                             public void onSuccess(MessageBean result) {
                                 if (result.isSuccess()) {
-                                    adapter.delCart(position);
-                                    sendBroadCast(adapter.getItemCount());
+                                    loadCartList(I.ACTION_DOWNLOAD);
                                 }
                                 ToastUtil.show(mContext, result.getMsg());
                             }
@@ -264,7 +261,7 @@ public class FragmentCart extends BaseFragment implements SwipeRefreshLayout.OnR
             @Override
             public void onSuccess(MessageBean result) {
                 if (result.isSuccess()) {
-                    adapter.notifyDataSetChanged();
+                    loadCartList(I.ACTION_DOWNLOAD);
                 }
                 ToastUtil.show(mContext, result.getMsg());
             }
@@ -281,6 +278,11 @@ public class FragmentCart extends BaseFragment implements SwipeRefreshLayout.OnR
         CartBean bean = adapter.getCartList().get(position);
         bean.setChecked(isChecked);
     }
+
+    private void updatePrice() {
+
+    }
+
 
     @OnClick(R.id.btnCartLogin)
     public void login(View v) {

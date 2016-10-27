@@ -38,9 +38,6 @@ public class RegisterActivity extends BaseActivity {
     @BindView(R.id.etPassConfirm)
     EditText etPassConfirm;
 
-    @BindView(R.id.btnRegister)
-    Button btnRegister;
-
     String userName, nickName, pass, passConfirm;
 
     @Override

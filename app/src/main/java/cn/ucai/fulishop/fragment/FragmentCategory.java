@@ -28,14 +28,12 @@ import cn.ucai.fulishop.view.LoadingDialog;
  * Created by Shinelon on 2016/10/13.
  */
 
-public class FragmentCategory extends Fragment {
+public class FragmentCategory extends BaseFragment {
 
     Context mContext;
 
     @BindView(R.id.category_list_ll)
     LinearLayout category_list_ll;
-
-    LoadingDialog loadingDialog;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -48,7 +46,6 @@ public class FragmentCategory extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mContext = getActivity();
-        loadingDialog = new LoadingDialog.Builder(mContext).create();
         loadCategoryGroupList();
     }
 

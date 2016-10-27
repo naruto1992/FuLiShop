@@ -40,7 +40,7 @@ import cn.ucai.fulishop.view.SpaceItemDecoration;
  * Created by Shinelon on 2016/10/13.
  */
 
-public class FragmentBoutique extends Fragment implements SwipeRefreshLayout.OnRefreshListener, OnItemClickListener {
+public class FragmentBoutique extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener, OnItemClickListener {
 
     Context mContext;
     @BindView(R.id.boutiqueSrl)
@@ -50,8 +50,6 @@ public class FragmentBoutique extends Fragment implements SwipeRefreshLayout.OnR
 
     BoutiquesAdapter adapter;
     List<BoutiqueBean> mBoutiqueList;
-
-    LoadingDialog loadingDialog;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -65,7 +63,6 @@ public class FragmentBoutique extends Fragment implements SwipeRefreshLayout.OnR
         super.onActivityCreated(savedInstanceState);
         mContext = getActivity();
         initView();
-        loadingDialog = new LoadingDialog.Builder(mContext).create();
         loadBoutiqueList(I.ACTION_DOWNLOAD);
     }
 

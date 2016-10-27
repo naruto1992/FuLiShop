@@ -45,7 +45,7 @@ import cn.ucai.fulishop.view.SpaceItemDecoration;
  * Created by Shinelon on 2016/10/13.
  */
 
-public class FragmentNewgoods extends Fragment implements OnRefreshListener, OnItemClickListener {
+public class FragmentNewgoods extends BaseFragment implements OnRefreshListener, OnItemClickListener {
 
     Context mContext;
 
@@ -61,7 +61,6 @@ public class FragmentNewgoods extends Fragment implements OnRefreshListener, OnI
     GridLayoutManager mLayoutManager;
 
     int pageId = 1;
-    LoadingDialog loadingDialog;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -94,7 +93,6 @@ public class FragmentNewgoods extends Fragment implements OnRefreshListener, OnI
         newGoodsRv.setAdapter(adapter);
         //
         initListener();
-        loadingDialog = new LoadingDialog.Builder(mContext).create();
     }
 
     private void initListener() {

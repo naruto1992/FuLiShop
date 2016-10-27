@@ -48,7 +48,7 @@ import cn.ucai.fulishop.view.SpaceItemDecoration;
  * Created by Shinelon on 2016/10/13.
  */
 
-public class FragmentCart extends Fragment implements SwipeRefreshLayout.OnRefreshListener, ListListener.OnItemLongClickListener, CartListAdapter.CartListener {
+public class FragmentCart extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener, ListListener.OnItemLongClickListener, CartListAdapter.CartListener {
 
     Context mContext;
     @BindView(R.id.btnCartLogin)
@@ -70,7 +70,8 @@ public class FragmentCart extends Fragment implements SwipeRefreshLayout.OnRefre
 
     CartListAdapter adapter;
     int count; //购物车总数量
-    LoadingDialog loadingDialog;
+
+    BroadcastReceiver mReceiver;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -87,7 +88,6 @@ public class FragmentCart extends Fragment implements SwipeRefreshLayout.OnRefre
     }
 
     private void initView() {
-        loadingDialog = new LoadingDialog.Builder(mContext).create();
         if (FuLiShopApplication.getInstance().hasLogined()) {
             btnCartLogin.setVisibility(View.GONE);
             cartSrl.setVisibility(View.VISIBLE);
@@ -100,12 +100,10 @@ public class FragmentCart extends Fragment implements SwipeRefreshLayout.OnRefre
     }
 
     private void initBroadcast() {
-        LocalBroadcastManager broadcastManager = LocalBroadcastManager
-                .getInstance(mContext);
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(I.HASLOGINED);
         intentFilter.addAction(I.HASLOGINOUT);
-        final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        mReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 switch (intent.getAction()) {
@@ -119,6 +117,7 @@ public class FragmentCart extends Fragment implements SwipeRefreshLayout.OnRefre
                         // 已注销
                         btnCartLogin.setVisibility(View.VISIBLE);
                         cartSrl.setVisibility(View.GONE);
+                        noCartHint.setVisibility(View.GONE);
                         // 发送广播通知重置购物车数量
                         sendBroadCast(0);
                         break;
@@ -185,7 +184,7 @@ public class FragmentCart extends Fragment implements SwipeRefreshLayout.OnRefre
         // 发送广播通知
         Intent intent = new Intent(I.Cart.COUNT);
         intent.putExtra(I.Cart.COUNT, count);
-        LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
+        broadcastManager.sendBroadcast(intent);
     }
 
     private void initList(ArrayList<CartBean> list) {
@@ -286,5 +285,13 @@ public class FragmentCart extends Fragment implements SwipeRefreshLayout.OnRefre
     @OnClick(R.id.btnCartLogin)
     public void login(View v) {
         MFGT.startActivity(getActivity(), LoginActivity.class);
+    }
+
+    @Override
+    public void onDestroy() {
+        if (mReceiver != null) {
+            broadcastManager.unregisterReceiver(mReceiver);
+        }
+        super.onDestroy();
     }
 }

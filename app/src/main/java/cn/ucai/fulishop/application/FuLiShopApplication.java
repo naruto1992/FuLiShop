@@ -2,6 +2,7 @@ package cn.ucai.fulishop.application;
 
 import android.app.Application;
 import android.content.Context;
+import android.support.v4.content.LocalBroadcastManager;
 
 import cn.ucai.fulishop.api.I;
 import cn.ucai.fulishop.db.User;
@@ -29,6 +30,7 @@ public class FuLiShopApplication extends Application {
     public static Context getContext() {
         return context;
     }
+
 
     @Override
     public void onCreate() {

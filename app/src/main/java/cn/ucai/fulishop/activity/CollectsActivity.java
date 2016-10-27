@@ -28,7 +28,7 @@ import cn.ucai.fulishop.utils.ToastUtil;
 import cn.ucai.fulishop.view.LoadingDialog;
 import cn.ucai.fulishop.view.SpaceItemDecoration;
 
-public class CollectsActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
+public class CollectsActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener {
 
     @BindView(R.id.collectstRv)
     RecyclerView collectstRv;
@@ -41,7 +41,6 @@ public class CollectsActivity extends AppCompatActivity implements SwipeRefreshL
     GridLayoutManager mLayoutManager;
     String userName;
     int pageId = 1;
-    LoadingDialog loadingDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,7 +73,6 @@ public class CollectsActivity extends AppCompatActivity implements SwipeRefreshL
         collectstRv.setAdapter(adapter);
         //
         initListener();
-        loadingDialog = new LoadingDialog.Builder(mContext).create();
     }
 
     private void initListener() {

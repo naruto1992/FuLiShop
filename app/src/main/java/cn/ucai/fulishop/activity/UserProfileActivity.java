@@ -147,7 +147,7 @@ public class UserProfileActivity extends BaseActivity {
                     ToastUtil.show(mContext, "昵称修改成功");
                     // 发送广播通知
                     Intent intent = new Intent(I.NEED_UPDATE);
-                    LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
+                    broadcastManager.sendBroadcast(intent);
                 }
             }
 
@@ -189,7 +189,7 @@ public class UserProfileActivity extends BaseActivity {
                     ToastUtil.show(mContext, "头像修改成功");
                     // 发送广播通知
                     Intent intent = new Intent(I.NEED_UPDATE);
-                    LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
+                    broadcastManager.sendBroadcast(intent);
                 }
             }
 
@@ -210,7 +210,7 @@ public class UserProfileActivity extends BaseActivity {
                         FuLiShopApplication.getInstance().logout(user);
                         // 发送广播通知
                         Intent intent = new Intent(I.HASLOGINOUT);
-                        LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
+                        broadcastManager.sendBroadcast(intent);
                         MFGT.finish(UserProfileActivity.this);
                     }
                 })

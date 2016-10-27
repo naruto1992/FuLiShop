@@ -42,7 +42,7 @@ import cn.ucai.fulishop.utils.ToastUtil;
  * Created by Shinelon on 2016/10/13.
  */
 
-public class FragmentPersonal extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
+public class FragmentPersonal extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener {
 
     Context mContext;
 
@@ -70,6 +70,8 @@ public class FragmentPersonal extends Fragment implements SwipeRefreshLayout.OnR
     List<FootPrint> footPrints;
     String userName;
 
+    BroadcastReceiver mReceiver;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View layout = inflater.inflate(R.layout.fragment_personal, container, false);
@@ -96,13 +98,11 @@ public class FragmentPersonal extends Fragment implements SwipeRefreshLayout.OnR
     }
 
     private void initBroadcast() {
-        LocalBroadcastManager broadcastManager = LocalBroadcastManager
-                .getInstance(mContext);
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(I.HASLOGINED);
         intentFilter.addAction(I.HASLOGINOUT);
         intentFilter.addAction(I.NEED_UPDATE);
-        final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        mReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 switch (intent.getAction()) {
@@ -223,5 +223,13 @@ public class FragmentPersonal extends Fragment implements SwipeRefreshLayout.OnR
                 startActivity(footPrints);
                 break;
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        if (mReceiver != null) {
+            broadcastManager.unregisterReceiver(mReceiver);
+        }
+        super.onDestroy();
     }
 }

@@ -60,6 +60,7 @@ public class MainActivity extends BaseActivity implements
     TextView cartHint; //购物车数量
 
     int index = 0;
+    BroadcastReceiver mReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,11 +109,9 @@ public class MainActivity extends BaseActivity implements
     }
 
     private void initBroadCast() {
-        LocalBroadcastManager broadcastManager = LocalBroadcastManager
-                .getInstance(mContext);
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(I.Cart.COUNT);
-        BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        mReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 switch (intent.getAction()) {
@@ -198,5 +197,13 @@ public class MainActivity extends BaseActivity implements
             return;
         }
         super.onBackPressed();
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (mReceiver != null) {
+            broadcastManager.unregisterReceiver(mReceiver);
+        }
+        super.onDestroy();
     }
 }

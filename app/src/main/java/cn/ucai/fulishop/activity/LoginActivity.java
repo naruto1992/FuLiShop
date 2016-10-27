@@ -82,7 +82,7 @@ public class LoginActivity extends BaseActivity {
                             FuLiShopApplication.setUser(userBean);
                             // 发送广播通知
                             Intent intent = new Intent(I.HASLOGINED);
-                            LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
+                            broadcastManager.sendBroadcast(intent);
                             setResult(RESULT_OK, getIntent());
                             finish();
                         } else {

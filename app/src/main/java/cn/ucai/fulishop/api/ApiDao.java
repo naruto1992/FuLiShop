@@ -303,11 +303,34 @@ public class ApiDao {
                 .execute(listener);
     }
 
+    /**
+     * 更新昵称
+     *
+     * @param context
+     * @param username
+     * @param nick
+     * @param listener
+     */
     public static void updateNick(Context context, String username, String nick, OkHttpUtils.OnCompleteListener<Result> listener) {
         OkHttpUtils<Result> utils = new OkHttpUtils<>(context);
         utils.setRequestUrl(I.REQUEST_UPDATE_USER_NICK)
                 .addParam(I.User.USER_NAME, username)
                 .addParam(I.User.NICK, nick)
+                .targetClass(Result.class)
+                .execute(listener);
+    }
+
+    /**
+     * 取消注册
+     *
+     * @param context
+     * @param username
+     * @param listener
+     */
+    public static void unregister(Context context, String username, OkHttpUtils.OnCompleteListener<Result> listener) {
+        OkHttpUtils<Result> utils = new OkHttpUtils<>(context);
+        utils.setRequestUrl(I.REQUEST_UNREGISTER)
+                .addParam(I.User.USER_NAME, username)
                 .targetClass(Result.class)
                 .execute(listener);
     }

@@ -8,6 +8,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -15,6 +18,7 @@ import cn.ucai.fulishop.R;
 import cn.ucai.fulishop.api.I;
 import cn.ucai.fulishop.bean.Result;
 import cn.ucai.fulishop.utils.EditUtil;
+import cn.ucai.fulishop.utils.MD5;
 import cn.ucai.fulishop.utils.OkHttpUtils;
 import cn.ucai.fulishop.utils.ToastUtil;
 import cn.ucai.fulishop.view.TitleBar;
@@ -68,12 +72,18 @@ public class RegisterActivity extends BaseActivity {
         }
         userName = etUserName.getEditableText().toString().trim();
         nickName = etNickName.getEditableText().toString().trim();
+        String utf8_nick = null;
+        try {
+            utf8_nick = URLDecoder.decode(nickName, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
         final OkHttpUtils<Result> utils = new OkHttpUtils<>(mContext);
         utils.setRequestUrl(I.REQUEST_REGISTER)
                 .post()
                 .addParam(I.User.USER_NAME, userName)
-                .addParam(I.User.NICK, nickName)
-                .addParam(I.User.PASSWORD, pass)
+                .addParam(I.User.NICK, utf8_nick)
+                .addParam(I.User.PASSWORD, MD5.getMessageDigest(pass))
                 .targetClass(Result.class)
                 .execute(new OkHttpUtils.OnCompleteListener<Result>() {
                     @Override

@@ -19,6 +19,7 @@ import cn.ucai.fulishop.bean.Result;
 import cn.ucai.fulishop.db.DBManager;
 import cn.ucai.fulishop.db.User;
 import cn.ucai.fulishop.utils.EditUtil;
+import cn.ucai.fulishop.utils.MD5;
 import cn.ucai.fulishop.utils.MFGT;
 import cn.ucai.fulishop.utils.OkHttpUtils;
 import cn.ucai.fulishop.utils.ToastUtil;
@@ -64,7 +65,7 @@ public class LoginActivity extends BaseActivity {
         final OkHttpUtils<Result> utils = new OkHttpUtils<>(this);
         utils.setRequestUrl(I.REQUEST_LOGIN)
                 .addParam(I.User.USER_NAME, userNanme)
-                .addParam(I.User.PASSWORD, pass)
+                .addParam(I.User.PASSWORD, MD5.getMessageDigest(pass))
                 .targetClass(Result.class)
                 .execute(new OkHttpUtils.OnCompleteListener<Result>() {
                     @Override
@@ -104,6 +105,6 @@ public class LoginActivity extends BaseActivity {
 
     @OnClick(R.id.setServerIp)
     public void setServerIp(View v) {
-
+        ToastUtil.show(mContext, "设置服务端IP地址");
     }
 }

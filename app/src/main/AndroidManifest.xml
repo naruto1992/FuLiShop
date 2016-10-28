@@ -26,7 +26,8 @@
         <activity android:name=".activity.CatListActivity" />
         <activity android:name=".activity.UserProfileActivity" />
         <activity android:name=".activity.FootPrintsActivity" />
-        <activity android:name=".activity.CollectsActivity"></activity>
+        <activity android:name=".activity.CollectsActivity" />
+        <activity android:name=".activity.AddressActivity"></activity>
     </application>
 
 </manifest>

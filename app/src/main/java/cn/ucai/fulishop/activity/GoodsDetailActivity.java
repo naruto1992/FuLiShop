@@ -320,6 +320,6 @@ public class GoodsDetailActivity extends BaseActivity {
 
     @OnClick(R.id.ivShareGoods)
     public void shareGoods(View v) {
-        ToastUtil.show(mContext, "分享商品");
+        ToastUtil.show(mContext, "分享商品——开发中...");
     }
 }

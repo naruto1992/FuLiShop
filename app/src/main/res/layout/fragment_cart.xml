@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/windows_color"
+    android:background="@color/fragment_bg"
     android:orientation="vertical">
 
     <cn.ucai.fulishop.view.BottomLineTextView
@@ -58,24 +58,29 @@
                     android:paddingLeft="100dp">
 
                     <TextView
+                        android:id="@+id/tvSumPricre"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:padding="3dp"
                         android:text="合计：￥0"
                         android:textColor="@color/google_yellow" />
 
                     <TextView
+                        android:id="@+id/tvSparePricre"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:padding="3dp"
                         android:text="节省：￥0"
                         android:textColor="@color/google_red" />
                 </LinearLayout>
 
                 <Button
+                    android:id="@+id/btnGoToBuy"
                     android:layout_width="100dp"
                     android:layout_height="match_parent"
                     android:layout_margin="4dp"
                     android:background="@drawable/btn_login_bg"
-                    android:enabled="true"
+                    android:enabled="false"
                     android:text="购买"
                     android:textColor="@color/white"
                     android:textSize="16sp" />

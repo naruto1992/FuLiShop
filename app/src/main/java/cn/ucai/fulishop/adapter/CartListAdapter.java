@@ -107,9 +107,7 @@ public class CartListAdapter extends RecyclerView.Adapter<ViewHolder> implements
         if (bean.getGoods() != null) {
             GoodsDetailsBean details = bean.getGoods();
             itemViewHolder.tvCartName.setText(details.getGoodsName());
-            String price = details.getCurrencyPrice().replace("￥", "");
-            int totalPrice = (int) ((Double.valueOf(price)) * bean.getCount());
-            itemViewHolder.tvCartTotalPrice.setText("￥" + totalPrice);
+            itemViewHolder.tvCartTotalPrice.setText(details.getCurrencyPrice());
             //加载图片
             ImageLoader.build(I.DOWNLOAD_IMG_URL)
                     .url(details.getGoodsThumb())

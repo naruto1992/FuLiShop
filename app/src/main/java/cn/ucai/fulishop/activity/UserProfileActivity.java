@@ -220,6 +220,40 @@ public class UserProfileActivity extends BaseActivity {
 
     //取消注册
     private void deleteRegister() {
-        ToastUtil.show(mContext, "取消注册");
+        new AlertDialog.Builder(mContext).setMessage("您确定要取消注册吗？")
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        unRegister();
+                    }
+                })
+                .setNegativeButton("取消", null)
+                .create().show();
+    }
+
+    private void unRegister() {
+        ApiDao.unregister(mContext, mUserName, new OkHttpUtils.OnCompleteListener<Result>() {
+            @Override
+            public void onStart() {
+
+            }
+
+            @Override
+            public void onSuccess(Result result) {
+                if (result.getRetCode() == 0 && result.isRetMsg()) {
+                    ToastUtil.show(mContext, "取消注册成功");
+                    FuLiShopApplication.getInstance().logout(user);
+                    // 发送广播通知
+                    Intent intent = new Intent(I.HASLOGINOUT);
+                    broadcastManager.sendBroadcast(intent);
+                    MFGT.finish(UserProfileActivity.this);
+                }
+            }
+
+            @Override
+            public void onError(String error) {
+                ToastUtil.show(mContext, error);
+            }
+        });
     }
 }

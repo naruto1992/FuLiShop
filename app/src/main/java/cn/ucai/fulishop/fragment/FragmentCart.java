@@ -7,16 +7,14 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -27,8 +25,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.ucai.fulishop.R;
+import cn.ucai.fulishop.activity.AddressActivity;
 import cn.ucai.fulishop.activity.LoginActivity;
-import cn.ucai.fulishop.activity.MainActivity;
 import cn.ucai.fulishop.adapter.CartListAdapter;
 import cn.ucai.fulishop.api.ApiDao;
 import cn.ucai.fulishop.api.I;
@@ -41,7 +39,6 @@ import cn.ucai.fulishop.utils.MFGT;
 import cn.ucai.fulishop.utils.OkHttpUtils;
 import cn.ucai.fulishop.utils.ToastUtil;
 import cn.ucai.fulishop.view.BottomLineTextView;
-import cn.ucai.fulishop.view.LoadingDialog;
 import cn.ucai.fulishop.view.SpaceItemDecoration;
 
 /**
@@ -52,24 +49,24 @@ public class FragmentCart extends BaseFragment implements SwipeRefreshLayout.OnR
 
     Context mContext;
     @BindView(R.id.btnCartLogin)
-    BottomLineTextView btnCartLogin;
-
+    BottomLineTextView btnCartLogin; //登录
     @BindView(R.id.noCartHint)
-    TextView noCartHint;
-
+    TextView noCartHint; //购物车空空如也
     @BindView(R.id.cartSrl)
     SwipeRefreshLayout cartSrl;
-
     @BindView(R.id.cartRv)
     RecyclerView cartRv;
+    @BindView(R.id.tvSumPricre)
+    TextView tvSumPricre; //总价
+    @BindView(R.id.tvSparePricre)
+    TextView tvSparePricre; //节省
+    @BindView(R.id.btnGoToBuy)
+    Button btnGoToBuy;  //购买
 
-    String userName;
-    int pageId = 1;
-    OkHttpUtils.OnCompleteListener<CartBean[]> listener;
-    int action; //当前请求action
-
+    String userName; //用户名
     CartListAdapter adapter;
     int count; //购物车总数量
+    int sumRankPrice = 0;
 
     BroadcastReceiver mReceiver;
 
@@ -155,12 +152,13 @@ public class FragmentCart extends BaseFragment implements SwipeRefreshLayout.OnR
                             cartSrl.setRefreshing(false);
                             break;
                     }
-                    count = list.size();
-                    noCartHint.setVisibility(count != 0 ? View.GONE : View.VISIBLE);
+                    noCartHint.setVisibility(list.size() != 0 ? View.GONE : View.VISIBLE);
+                    updatePrice(list);
                 } else {
                     count = 0;
                     noCartHint.setVisibility(View.VISIBLE);
                     cartSrl.setRefreshing(false);
+                    updatePrice(null);
                 }
                 sendBroadCast(count);
             }
@@ -189,16 +187,10 @@ public class FragmentCart extends BaseFragment implements SwipeRefreshLayout.OnR
         adapter = new CartListAdapter(mContext, list);
         adapter.setOnItemLongClickListener(this);
         adapter.setCartListener(this);
-        final GridLayoutManager manager = new GridLayoutManager(mContext, 2);
-        manager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
-            @Override
-            public int getSpanSize(int position) {
-                return 2;
-            }
-        });
+        final LinearLayoutManager manager = new LinearLayoutManager(mContext);
         cartRv.setLayoutManager(manager);
         cartRv.setAdapter(adapter);
-        cartRv.addItemDecoration(new SpaceItemDecoration(20));
+        cartRv.addItemDecoration(new SpaceItemDecoration(10));
         //
         cartSrl.setOnRefreshListener(this);
         noCartHint.setVisibility(View.VISIBLE);
@@ -277,16 +269,59 @@ public class FragmentCart extends BaseFragment implements SwipeRefreshLayout.OnR
     public void onCheckChanged(int position, boolean isChecked) {
         CartBean bean = adapter.getCartList().get(position);
         bean.setChecked(isChecked);
+        //计算总价
+        updatePrice(adapter.getCartList());
     }
 
-    private void updatePrice() {
-
+    //计算总价
+    private void updatePrice(ArrayList<CartBean> list) {
+        sumRankPrice = 0;
+        int sumCurrencyPrice = 0;
+        count = 0;
+        if (list != null && list.size() > 0) {
+            for (CartBean bean : list) {
+                count += bean.getCount();
+                if (bean.isChecked()) {
+                    int currencyPrice = Integer.parseInt(bean.getGoods().getCurrencyPrice().replace("￥", ""));
+                    sumCurrencyPrice += currencyPrice * bean.getCount();
+                    int rankPrice = Integer.parseInt(bean.getGoods().getRankPrice().replace("￥", ""));
+                    sumRankPrice += rankPrice * bean.getCount();
+                }
+            }
+        }
+        tvSumPricre.setText("总价:  ￥" + sumRankPrice);
+        tvSparePricre.setText("节省:  ￥" + (sumCurrencyPrice - sumRankPrice));
+        //设置购买按钮状态
+        boolean flag = false;
+        for (CartBean c : adapter.getCartList()) {
+            if (c.isChecked()) {
+                flag = true;
+                break;
+            }
+        }
+        btnGoToBuy.setEnabled(flag);
     }
 
 
     @OnClick(R.id.btnCartLogin)
     public void login(View v) {
         MFGT.startActivity(getActivity(), LoginActivity.class);
+    }
+
+    @OnClick(R.id.btnGoToBuy)
+    public void onClick(View v) {
+        ArrayList<Integer> selected = new ArrayList<>();
+        for (CartBean bean : adapter.getCartList()) {
+            if (bean.isChecked()) {
+                selected.add(bean.getId());
+            }
+        }
+        Intent intent = new Intent(getActivity(), AddressActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putIntegerArrayList("cartIds", selected);
+        bundle.putInt("sumRankPrice", sumRankPrice);
+        intent.putExtras(bundle);
+        MFGT.startActivityByIntent(getActivity(), intent);
     }
 
     @Override
@@ -296,4 +331,5 @@ public class FragmentCart extends BaseFragment implements SwipeRefreshLayout.OnR
         }
         super.onDestroy();
     }
+
 }

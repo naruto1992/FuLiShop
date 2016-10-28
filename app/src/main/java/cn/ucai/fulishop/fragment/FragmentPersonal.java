@@ -180,7 +180,7 @@ public class FragmentPersonal extends BaseFragment implements SwipeRefreshLayout
 
             @Override
             public void onSuccess(MessageBean result) {
-                if (result.isSuccess()) {
+                if (result != null) {
                     personCollectNum.setText(result.getMsg());
                 }
             }
@@ -231,5 +231,12 @@ public class FragmentPersonal extends BaseFragment implements SwipeRefreshLayout
             broadcastManager.unregisterReceiver(mReceiver);
         }
         super.onDestroy();
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        loadCollectNum();
     }
 }

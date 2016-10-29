@@ -122,6 +122,7 @@ public class DBManager {
         return userDao;
     }
 
+    //保存用户
     public synchronized void saveUser(User user) {
         userDao = getUserDao();
         List<User> findList = findUserByName(user.getMuserName());
@@ -141,6 +142,7 @@ public class DBManager {
         userDao.insert(user);
     }
 
+    //根据用户名查询——集合
     private static List<User> findUserByName(String userName) {
         userDao = getUserDao();
         List<User> list = userDao.queryBuilder()
@@ -150,6 +152,7 @@ public class DBManager {
         return list;
     }
 
+    //根据用户名查询——1个
     public synchronized User getUser(String userName) {
         userDao = getUserDao();
         List<User> findList = findUserByName(userName);
@@ -160,9 +163,9 @@ public class DBManager {
         return user;
     }
 
+    //取消注册时使用
     public synchronized void removeUser(User user) {
         userDao = getUserDao();
         userDao.delete(user);
-        Log.e("main", "delete user");
     }
 }

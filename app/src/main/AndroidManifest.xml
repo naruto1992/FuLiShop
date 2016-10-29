@@ -27,7 +27,7 @@
         <activity android:name=".activity.UserProfileActivity" />
         <activity android:name=".activity.FootPrintsActivity" />
         <activity android:name=".activity.CollectsActivity" />
-        <activity android:name=".activity.AddressActivity"></activity>
+        <activity android:name=".activity.AddressActivity" />
     </application>
 
 </manifest>

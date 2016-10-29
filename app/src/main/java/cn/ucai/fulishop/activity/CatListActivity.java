@@ -16,6 +16,8 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -185,8 +187,8 @@ public class CatListActivity extends BaseActivity implements SwipeRefreshLayout.
         sortListPw.setBackgroundDrawable(getResources().getDrawable(R.drawable.black_border_shape_yellow));
     }
 
-    private void loadGoodsListByCat(final int action, int catId, int pageId) {
-        ApiDao.loadGoodsListByCat(mContext, catId, pageId, new OkHttpUtils.OnCompleteListener<NewGoodsBean[]>() {
+    private void loadGoodsListByCat(final int action, int catId, final int pageId) {
+        ApiDao.loadGoodsListByCat(mContext, catId, pageId, new OkHttpUtils.OnCompleteListener<String>() {
             @Override
             public void onStart() {
                 if (action != I.ACTION_PULL_DOWN) {
@@ -195,12 +197,13 @@ public class CatListActivity extends BaseActivity implements SwipeRefreshLayout.
             }
 
             @Override
-            public void onSuccess(NewGoodsBean[] result) {
+            public void onSuccess(String result) {
                 if (loadingDialog.isShowing()) {
                     loadingDialog.dismiss();
                 }
-                if (result != null && result.length > 0) {
-                    ArrayList<NewGoodsBean> newgoodsList = ListUtil.array2List(result);
+                if (result != null) {
+                    NewGoodsBean[] list = new Gson().fromJson(result, NewGoodsBean[].class);
+                    ArrayList<NewGoodsBean> newgoodsList = ListUtil.array2List(list);
                     switch (action) {
                         case I.ACTION_DOWNLOAD: //第一次加载
                             adapter.init(newgoodsList);
@@ -214,8 +217,14 @@ public class CatListActivity extends BaseActivity implements SwipeRefreshLayout.
                             break;
                     }
                     adapter.setMore(newgoodsList.size() == I.PAGE_SIZE_DEFAULT);
+                    if (pageId == 1 && newgoodsList.size() == 0) {
+                        ToastUtil.show(mContext, "暂无商品");
+                    }
                 } else {
                     adapter.setMore(false);
+                    if (pageId == 1) {
+                        ToastUtil.show(mContext, "暂无商品");
+                    }
                 }
             }
 

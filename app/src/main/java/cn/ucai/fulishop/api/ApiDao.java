@@ -171,12 +171,12 @@ public class ApiDao {
      * @param listener
      */
     public static void loadGoodsListByCat(Context context, int catId, int pageId, OkHttpUtils.OnCompleteListener listener) {
-        OkHttpUtils<NewGoodsBean[]> utils = new OkHttpUtils<>(context);
+        OkHttpUtils<String> utils = new OkHttpUtils<>(context);
         utils.setRequestUrl(I.REQUEST_FIND_GOODS_DETAILS)
                 .addParam(I.GoodsDetails.KEY_CAT_ID, "" + catId)
                 .addParam(I.PAGE_ID, "" + pageId)
                 .addParam(I.PAGE_SIZE, "" + I.PAGE_SIZE_DEFAULT)
-                .targetClass(NewGoodsBean[].class)
+                .targetClass(String.class)
                 .execute(listener);
     }
 

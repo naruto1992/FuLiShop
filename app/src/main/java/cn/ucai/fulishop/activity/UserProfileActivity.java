@@ -87,7 +87,7 @@ public class UserProfileActivity extends BaseActivity {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.userAvatar:
-                avatarUtil = new AvatarUtil(this, mUserName, I.AVATAR_TYPE_USER_PATH);
+                avatarUtil = new AvatarUtil(this, user.getMuserName(), user.getMavatarPath());
                 break;
             case R.id.userNick:
                 editNick();
@@ -174,9 +174,9 @@ public class UserProfileActivity extends BaseActivity {
     //上传头像
     private void updateAvatar() {
         File file = new File(AvatarUtil.getAvatarPath(mContext,
-                I.AVATAR_TYPE_USER_PATH + "/" + mUserName
-                        + I.AVATAR_SUFFIX_JPG));
-        ApiDao.updateAvatar(mContext, mUserName, file, new OkHttpUtils.OnCompleteListener<Result>() {
+                user.getMavatarPath() + "/" + user.getMuserName()
+                        + user.getMavatarSuffix()));
+        ApiDao.updateAvatar(mContext, user.getMuserName(), file, new OkHttpUtils.OnCompleteListener<Result>() {
             @Override
             public void onStart() {
                 loadingDialog.show();

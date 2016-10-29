@@ -171,7 +171,7 @@ public class FragmentCart extends BaseFragment implements SwipeRefreshLayout.OnR
                 if (action == I.ACTION_PULL_DOWN) {
                     cartSrl.setRefreshing(false);
                 }
-                ToastUtil.showOnUI((Activity) mContext, error);
+                ToastUtil.show(mContext, error);
             }
         });
     }

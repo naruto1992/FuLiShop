@@ -38,10 +38,6 @@ import cn.ucai.fulishop.utils.MFGT;
 import cn.ucai.fulishop.utils.OkHttpUtils;
 import cn.ucai.fulishop.utils.ToastUtil;
 
-/**
- * Created by Shinelon on 2016/10/13.
- */
-
 public class FragmentPersonal extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener {
 
     Context mContext;
@@ -116,7 +112,7 @@ public class FragmentPersonal extends BaseFragment implements SwipeRefreshLayout
                         // 发送广播通知
                         Intent cart = new Intent(I.Cart.COUNT);
                         intent.putExtra(I.Cart.COUNT, 0);
-                        LocalBroadcastManager.getInstance(mContext).sendBroadcast(cart);
+                        broadcastManager.sendBroadcast(cart);
                         break;
                     case I.NEED_UPDATE:
                         break;
@@ -135,8 +131,7 @@ public class FragmentPersonal extends BaseFragment implements SwipeRefreshLayout
             tvUserNick.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent profile = new Intent(mContext, UserProfileActivity.class);
-                    startActivity(profile);
+                    MFGT.startActivity(getActivity(), UserProfileActivity.class);
                 }
             });
             loadCollectNum();
@@ -175,13 +170,14 @@ public class FragmentPersonal extends BaseFragment implements SwipeRefreshLayout
         ApiDao.loadCollectCount(mContext, userName, new OkHttpUtils.OnCompleteListener<MessageBean>() {
             @Override
             public void onStart() {
-
             }
 
             @Override
             public void onSuccess(MessageBean result) {
-                if (result != null) {
+                if (result != null && result.isSuccess()) {
                     personCollectNum.setText(result.getMsg());
+                } else {
+                    personCollectNum.setText("0");
                 }
             }
 
@@ -195,8 +191,7 @@ public class FragmentPersonal extends BaseFragment implements SwipeRefreshLayout
     //设置
     @OnClick(R.id.personSetting)
     public void setting(View v) {
-        Intent profile = new Intent(mContext, UserProfileActivity.class);
-        startActivity(profile);
+        MFGT.startActivity(getActivity(), UserProfileActivity.class);
     }
 
     @Override
@@ -208,19 +203,16 @@ public class FragmentPersonal extends BaseFragment implements SwipeRefreshLayout
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.userInfo:
-                Intent profile = new Intent(mContext, UserProfileActivity.class);
-                startActivity(profile);
+                MFGT.startActivity(getActivity(), UserProfileActivity.class);
                 break;
             case R.id.personMessage:
                 ToastUtil.show(mContext, "我的消息");
                 break;
             case R.id.personCollect:
-                Intent colects = new Intent(getActivity(), CollectsActivity.class);
-                startActivity(colects);
+                MFGT.startActivity(getActivity(), CollectsActivity.class);
                 break;
             case R.id.footPrint:
-                Intent footPrints = new Intent(getActivity(), FootPrintsActivity.class);
-                startActivity(footPrints);
+                MFGT.startActivity(getActivity(), FootPrintsActivity.class);
                 break;
         }
     }
@@ -231,12 +223,5 @@ public class FragmentPersonal extends BaseFragment implements SwipeRefreshLayout
             broadcastManager.unregisterReceiver(mReceiver);
         }
         super.onDestroy();
-    }
-
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        loadCollectNum();
     }
 }

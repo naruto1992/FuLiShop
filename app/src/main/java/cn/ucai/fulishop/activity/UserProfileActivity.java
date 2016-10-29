@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -33,6 +34,7 @@ import cn.ucai.fulishop.utils.DialogUtil;
 import cn.ucai.fulishop.utils.ImageLoader;
 import cn.ucai.fulishop.utils.MFGT;
 import cn.ucai.fulishop.utils.OkHttpUtils;
+import cn.ucai.fulishop.utils.ResultUtils;
 import cn.ucai.fulishop.utils.ToastUtil;
 import cn.ucai.fulishop.view.SimpleListDialog;
 
@@ -117,7 +119,7 @@ public class UserProfileActivity extends BaseActivity {
 
     private void editNick() {
         final EditText numberPicker = new EditText(this);
-        numberPicker.setText(nick);
+        numberPicker.setText(userNick.getText());
         new AlertDialog.Builder(this)
                 .setMessage("请输入您的昵称").setView(numberPicker)
                 .setNegativeButton("取消", null)
@@ -174,18 +176,22 @@ public class UserProfileActivity extends BaseActivity {
     //上传头像
     private void updateAvatar() {
         File file = new File(AvatarUtil.getAvatarPath(mContext,
-                user.getMavatarPath() + "/" + user.getMuserName()
-                        + user.getMavatarSuffix()));
-        ApiDao.updateAvatar(mContext, user.getMuserName(), file, new OkHttpUtils.OnCompleteListener<Result>() {
+                "user_avatar" + "/" + user.getMuserName()
+                        + I.AVATAR_SUFFIX_JPG));
+        Log.e("path", file.getPath());
+        ApiDao.updateAvatar(mContext, user.getMuserName(), file, new OkHttpUtils.OnCompleteListener<String>() {
             @Override
             public void onStart() {
                 loadingDialog.show();
             }
 
             @Override
-            public void onSuccess(Result result) {
+            public void onSuccess(String s) {
                 loadingDialog.dismiss();
-                if (result.getRetCode() == 0 && result.isRetMsg()) {
+                Result result = ResultUtils.getResultFromJson(s, User.class);
+                if (result == null) {
+                    ToastUtil.show(mContext, "头像修改失败");
+                } else {
                     ToastUtil.show(mContext, "头像修改成功");
                     // 发送广播通知
                     Intent intent = new Intent(I.NEED_UPDATE);

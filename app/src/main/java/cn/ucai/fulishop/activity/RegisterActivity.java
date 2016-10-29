@@ -1,6 +1,7 @@
 package cn.ucai.fulishop.activity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -70,19 +71,13 @@ public class RegisterActivity extends BaseActivity {
             etPassConfirm.setError("密码不一致");
             return;
         }
-        userName = etUserName.getEditableText().toString().trim();
-        nickName = etNickName.getEditableText().toString().trim();
-        String utf8_nick = null;
-        try {
-            utf8_nick = URLDecoder.decode(nickName, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
+        userName = etUserName.getText().toString();
+        nickName = etNickName.getText().toString();
         final OkHttpUtils<Result> utils = new OkHttpUtils<>(mContext);
         utils.setRequestUrl(I.REQUEST_REGISTER)
                 .post()
                 .addParam(I.User.USER_NAME, userName)
-                .addParam(I.User.NICK, utf8_nick)
+                .addParam(I.User.NICK, nickName)
                 .addParam(I.User.PASSWORD, MD5.getMessageDigest(pass))
                 .targetClass(Result.class)
                 .execute(new OkHttpUtils.OnCompleteListener<Result>() {
@@ -96,6 +91,9 @@ public class RegisterActivity extends BaseActivity {
                         loadingDialog.dismiss();
                         if (result.getRetCode() == 0 && result.isRetMsg()) {
                             ToastUtil.show(mContext, "注册成功");
+                            Intent intent = getIntent();
+                            intent.putExtra("loginName", userName);
+                            setResult(RESULT_OK, intent);
                             finish();
                         } else {
                             if (result.getRetCode() == I.MSG_REGISTER_USERNAME_EXISTS) {

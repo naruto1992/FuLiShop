@@ -238,6 +238,7 @@ public class FragmentCart extends BaseFragment implements SwipeRefreshLayout.OnR
     @Override
     public void onItemClick(int position) {
         CartBean bean = adapter.getCartList().get(position);
+        MFGT.goToGoodsDetailActivity(getActivity(), bean.getGoodsId());
     }
 
     @Override

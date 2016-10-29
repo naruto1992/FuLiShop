@@ -163,6 +163,13 @@ public class DBManager {
         return user;
     }
 
+    public synchronized void updateUser(User user) {
+        userDao = getUserDao();
+        User u = getUser(FuLiShopApplication.getInstance().getUserName());
+        u = user;
+        userDao.update(u);
+    }
+
     //取消注册时使用
     public synchronized void removeUser(User user) {
         userDao = getUserDao();

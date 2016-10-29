@@ -63,6 +63,12 @@ public class FuLiShopApplication extends Application {
         PreferencesUtil.saveUserName(context, user.getMuserName());
     }
 
+    public static void updateUser(User user) {
+        FuLiShopApplication.user = user;
+        DBManager.getInstance().updateUser(user);
+        PreferencesUtil.saveUserName(context, user.getMuserName());
+    }
+
     //获取用户名
     public String getUserName() {
         return PreferencesUtil.getUserName(context);

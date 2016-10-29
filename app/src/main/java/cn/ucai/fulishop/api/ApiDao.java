@@ -292,13 +292,13 @@ public class ApiDao {
      * @param file
      * @param listener
      */
-    public static void updateAvatar(Context context, String username, File file, OkHttpUtils.OnCompleteListener<Result> listener) {
-        OkHttpUtils<Result> utils = new OkHttpUtils<>(context);
+    public static void updateAvatar(Context context, String username, File file, OkHttpUtils.OnCompleteListener<String> listener) {
+        OkHttpUtils<String> utils = new OkHttpUtils<>(context);
         utils.setRequestUrl(I.REQUEST_UPDATE_AVATAR)
                 .addParam(I.NAME_OR_HXID, username)
                 .addParam(I.AVATAR_TYPE, I.AVATAR_TYPE_USER_PATH)
                 .addFile2(file)
-                .targetClass(Result.class)
+                .targetClass(String.class)
                 .post()
                 .execute(listener);
     }

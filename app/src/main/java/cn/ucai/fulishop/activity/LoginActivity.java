@@ -100,7 +100,16 @@ public class LoginActivity extends BaseActivity {
 
     @OnClick(R.id.btn_register)
     public void register(View v) {
-        MFGT.startActivity(LoginActivity.this, RegisterActivity.class);
+        MFGT.startActivityForResult(LoginActivity.this, RegisterActivity.class, 111);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 111 && resultCode == RESULT_OK) {
+            String loginName = data.getStringExtra("loginName");
+            etLoginUserName.setText(loginName);
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @OnClick(R.id.setServerIp)
